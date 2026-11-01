@@ -34,8 +34,8 @@
 - [x] Run the full unit and browser suites, all-difficulty protected progression, offline boot and reproducibility checks.
 - [x] Independently review source and evidence. Fix material findings and rerun affected checks.
 - [x] Inspect/copy user previews, game and verification report.
-- [ ] Push the current branch, update PR #1, verify remote head and leave it unmerged.
-- [ ] Stop and report completed work, evidence, remaining art backlog and real-device limits.
+- [x] Push the current branch, update PR #1, verify remote head and leave it unmerged.
+- [x] Stop implementation and record completed work, evidence, remaining art backlog and real-device limits.
 
 ## Follow-up queue after this run
 

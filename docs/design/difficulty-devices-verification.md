@@ -65,3 +65,5 @@ Physical Android/iOS and desktop-GPU playtesting remains necessary for smoothnes
 Final checks completed on 2026-11-02. `npm test` passed 66/66; `npm run test:browser` exited 0 after all twelve scripts and all seven layout fixtures. The repeated build is byte-identical at the SHA-256 above. Independent source review has no outstanding actionable findings.
 
 [Desktop preview](../../outputs/bull-run-3d-preview.png) · [Phone preview](../../outputs/kart-mobile-preview.png).
+
+Delivered to the existing `kart-feel-upgrade` branch in [PR #1](https://github.com/tradelikebennow-lab/wallstreet-cart-racing/pull/1). Feature commit is `a3a712e`. The PR remains open and unmerged; this run performs no deployment.
