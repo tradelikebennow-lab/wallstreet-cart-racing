@@ -4,7 +4,9 @@
   "scripts": {
     "build": "python3 work/3d/build.py",
     "test": "node --test tests/*.test.cjs",
-    "test:browser": "node tests/browser.cjs"
+    "test:browser": "node tests/browser.cjs && node tests/acceptance.cjs && node tests/effects.cjs && node tests/reliability.cjs && node tests/reliability-contacts.cjs && node tests/collision-rules.cjs && node tests/presentation.cjs"
   },
-  "devDependencies": { "playwright": "^1.56.1" }
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
 }

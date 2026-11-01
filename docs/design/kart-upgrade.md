@@ -14,3 +14,6 @@ Node behavioral tests for control response, grip, step-rate consistency, course 
 
 ## Delivery
 Work on `kart-feel-upgrade`. Commit ordered verified units. Copy final user-facing outputs to the chat outputs directory and open a preview. Push a feature branch and open a PR for review; do not merge main or publish hosting.
+
+## Effects implementation contract
+Use localized shader materials for the player shield and lava. A shield contact starts a brief visible ripple, including the last absorbed hit; an inactive shield has no idle pulse. Keep the protected/invincible tint distinguishable. Ramp guide arrows animate forward along the sampled road surface; they announce the launch ramp and are not a new hidden speed mechanic. Add bounded, pooled exhaust behind visible missiles. Oil traps have a dark glossy footprint; no new item type is introduced. Effects and cues use shared course placement, reset on replay, honor reduced motion, and cannot cover news or controls. Preserve the independent music checkbox and master mute. Inspect actual pixels and WebGL console output, not merely material type assertions.

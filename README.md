@@ -16,7 +16,7 @@ Then visit http://localhost:8000.
 
 ## Editions
 
-- **Bull Run 3D:** the latest version, with drift turbo tiers, animated Trump podium hazards, 3D power-ups, spectators, effects, and arcade audio.
+- **Bull Run 3D:** the latest version, with momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, effects, and arcade audio.
 - **Bull Run Grand Prix:** the earlier colorful 2D racing edition.
 - **Midnight Exchange:** the alternative visual edition.
 
@@ -27,7 +27,9 @@ Then visit http://localhost:8000.
 - Up arrow or Space: jump; down arrow: slide.
 - 1, 2, 3: use items; P: pause.
 - Mobile: hold a screen edge to steer. Hold DRIFT with another finger, then release it to boost.
-- Pause menu: arcade music toggle. SND button: mute music and effects.
+- Pause menu: arcade music and Standard/Economy graphics. SND button: mute music and effects.
+- The opening course includes a banked corner and an automatic launch ramp with warning signs.
+- Jump input is buffered for 100 ms before landing. Fixed simulation steps and swept collision checks handle fast contacts.
 
 See the in-game guide for the complete rules and touch controls.
 
@@ -40,6 +42,27 @@ python3 work/3d/build.py
 ```
 
 The builder combines `outputs/bull-run-grand-prix.html` with the renderer and enhancements in `work/3d/`, and writes `outputs/bull-run-3d.html`. The earlier 2D HTML files are standalone source editions.
+
+## Verify changes
+
+The build uses Python 3. Tests use Node.js and Playwright Chromium. Install test dependencies once:
+
+```sh
+npm install
+npx playwright install chromium
+```
+
+Run the numerical behavior tests and generated-game browser checks:
+
+```sh
+npm run build
+npm test
+npm run test:browser
+```
+
+Browser checks cover keyboard and simultaneous touch drifting, items and hazards, jump buffering, collision protection rules, pause, replay, a protected full race, mobile layouts, news placement, shader compilation, labels, graphics settings, and resource cleanup. The protected race uses test-only invulnerability and centering to exercise progression; it is not a difficulty or balance test. Screenshots go to the ignored `.work/` directory. Scene counts are diagnostics, not an FPS benchmark.
+
+`PLAYWRIGHT_MODULE` can point to an existing Playwright installation when dependencies are provided by a development environment.
 
 ## Third-party code
 

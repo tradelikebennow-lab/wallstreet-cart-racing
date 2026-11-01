@@ -33,45 +33,45 @@
 
 ## 1. Handling and shared course
 Files: new `work/3d/handling.js`, `course.js`, `upgrade.py`; modify builder, renderer and state hooks. Tests: `tests/handling.test.cjs`, `course.test.cjs`.
-- [ ] Write and run failing tests for momentum, neutral settling, countersteer, reduced grip, edge clamp and time partition consistency.
-- [ ] Implement `stepHandling(state,input,surface,dt)` with returned x/vx/steer/heading. Consume effective steer after existing freeze/reverse rules.
-- [ ] Implement `sampleCourse(s,x)`, `crossedRampExit(s0,s1)`, `isSpawnClear(s,depth)` from one early-sector bank/ramp descriptor table. Keep P.y road-relative and launch once at the ramp lip. Add warning chevrons and spawn clearance.
-- [ ] Renderer uses shared course elevation/bank/pitch for road, edge marks, kart and hazards. Builder replacement misses fail loudly.
-- [ ] Run numerical tests, generated-game keyboard/drift and actual bank/ramp screenshot checks. Commit verified unit.
+- [x] Write and run failing tests for momentum, neutral settling, countersteer, reduced grip, edge clamp and time partition consistency.
+- [x] Implement `stepHandling(state,input,surface,dt)` with returned x/vx/steer/heading. Consume effective steer after existing freeze/reverse rules.
+- [x] Implement `sampleCourse(s,x)`, `crossedRampExit(s0,s1)`, `isSpawnClear(s,depth)` from one early-sector bank/ramp descriptor table. Keep P.y road-relative and launch once at the ramp lip. Add warning chevrons and spawn clearance.
+- [x] Renderer uses shared course elevation/bank/pitch for road, edge marks, kart and hazards. Builder replacement misses fail loudly.
+- [x] Run numerical tests, generated-game keyboard/drift and actual bank/ramp screenshot checks. Commit verified unit.
 
 ## 2. Chase camera
 Files: new `work/3d/camera.js`; modify renderer. Test: `tests/camera.test.cjs`.
-- [ ] Write and run failing tests for damping/convergence, viewport targets, bounded jump following and reduced-motion roll/FOV.
-- [ ] Add stable damped follow and look-ahead. Camera follows course slope, bank and speed without snapping on normal steering. Reset presentation state on mode transition or replay.
-- [ ] Test in browser with manual steering, bank, ramp, boost, pause and phone viewport. Commit.
+- [x] Write and run failing tests for damping/convergence, viewport targets, bounded jump following and reduced-motion roll/FOV.
+- [x] Add stable damped follow and look-ahead. Camera follows course slope, bank and speed without snapping on normal steering. Reset presentation state on mode transition or replay.
+- [x] Test in browser with manual steering, bank, ramp, boost, pause and phone viewport. Commit.
 
 ## 3. Effects and audio feedback
 Files: renderer, new focused effect helper if needed, arcade audio hooks. Tests: generated-game effect checks.
-- [ ] Add failing checks for shield hit pulse and bounded visible trail effects.
-- [ ] Add localized animated shield, directional boost/ramp material, flowing lava, distinct missile exhaust and glossy oil. Reuse bounded pools. Retain current music/mute controls and add landing/launch cues if absent.
-- [ ] Check all item paths, reduced motion and shader compile errors, then inspect screenshots. Commit.
+- [x] Add failing checks for shield hit pulse and bounded visible trail effects.
+- [x] Add localized animated shield, directional boost/ramp material, flowing lava, distinct missile exhaust and glossy oil. Reuse bounded pools. Retain current music/mute controls and add landing/launch cues if absent.
+- [x] Check all item paths, reduced motion and shader compile errors, then inspect screenshots. Commit.
 
 ## 4. Input and collision reliability
 Files: new `collisions.js`, control/simulation integration in upgrade.py; test helpers and browser.
-- [ ] Write and run failing tests for fast pass-through, moving-vs-moving contact, earliest target and diagonal miss.
-- [ ] Add fixed-step accumulator shared by browser/manual stepping, bounded catch-up, and 100 ms jump buffer consumed once on landing.
-- [ ] Capture previous poses before movement; sweep hazards, pickups, missile variants and rival missiles without changing game consequences. Check road-relative height at contact and retain slide rules.
-- [ ] Test 30/60/144 Hz partitions, early/expired jump input, freeze, shield, invulnerability and pause/reset. Commit.
+- [x] Write and run failing tests for fast pass-through, moving-vs-moving contact, earliest target and diagonal miss.
+- [x] Add fixed-step accumulator shared by browser/manual stepping, bounded catch-up, and 100 ms jump buffer consumed once on landing.
+- [x] Capture previous poses before movement; sweep hazards, pickups, missile variants and rival missiles without changing game consequences. Check road-relative height at contact and retain slide rules.
+- [x] Test 30/60/144 Hz partitions, early/expired jump input, freeze, shield, invulnerability and pause/reset. Commit.
 
 ## 5. World readability
 Files: renderer and guide copy. Tests: browser label bounds and screenshots.
-- [ ] Add camera-facing compact rival and pickup/action cues with distance and count limits. Keep physical signage and Trump speech intact.
-- [ ] Show corner/ramp warnings in world and guide. Keep all news in the top ticker.
-- [ ] Inspect desktop, 390x844 portrait, 844x390 landscape and reduced motion. Commit.
+- [x] Add camera-facing compact rival and pickup/action cues with distance and count limits. Keep physical signage and Trump speech intact.
+- [x] Show corner/ramp warnings in world and guide. Keep all news in the top ticker.
+- [x] Inspect desktop, 390x844 portrait, 844x390 landscape and reduced motion. Commit.
 
 ## 6. Rendering efficiency and quality
 Files: renderer and pause options. Tests: renderer introspection and repeat-race browser checks.
-- [ ] Add simpler distant scenery and correct refreshed instance bounds before enabling culling. Keep near gameplay objects recognizable.
-- [ ] Avoid recomputing hidden geometry. Add a low/standard graphics choice if needed to bound mobile shadow and pixel costs.
-- [ ] Validate visible bounds and near/far detail, no shader errors, and stable geometry counts. Report scene counts only, not unsupported FPS gains. Commit.
+- [x] Add simpler distant scenery and correct refreshed instance bounds before enabling culling. Keep near gameplay objects recognizable.
+- [x] Avoid recomputing hidden geometry. Add a low/standard graphics choice if needed to bound mobile shadow and pixel costs.
+- [x] Validate visible bounds and near/far detail, no shader errors, and stable geometry counts. Report scene counts only, not unsupported FPS gains. Commit.
 
 ## Delivery gate
-- [ ] Run Node suite, repeatable build, complete protected race, all hazards/items, touch and keyboard, pause/results/replay, mobile bounds and news strip checks.
-- [ ] Independent review of final diff. Fix important findings with regression tests.
+- [x] Run Node suite, repeatable build, complete protected race, all hazards/items, touch and keyboard, pause/results/replay, mobile bounds and news strip checks.
+- [x] Independent review of final diff. Fix important findings with regression tests.
 - [ ] Update README and final screenshots, copy outputs to chat deliverables, open preview.
 - [ ] Push feature branch and open ready PR. Verify remote head and PR URL. Do not merge.
