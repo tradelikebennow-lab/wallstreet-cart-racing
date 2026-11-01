@@ -7,7 +7,7 @@ const Handling = (() => {
   const n=Math.max(1,Math.ceil(dt*240)),h=dt/n;
   for(let i=0;i<n;i++){
    steer+=(command-steer)*(1-Math.exp(-14*h));
-   const target=limit(steer*(drift?3.05:3.3)-(surface.curvature||0)*(state.v||0)*2.6,-3.7,3.7);
+   const target=limit(steer*(drift?1.05:3.3)-(surface.curvature||0)*(state.v||0)*2.6,-3.7,3.7);
    const rate=(command*vx<0?13:9)*grip;
    const decay=Math.exp(-rate*h),old=vx;
    vx=target+(vx-target)*decay;
