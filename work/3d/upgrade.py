@@ -31,7 +31,7 @@ def upgrade(s):
     s = replace_once(s, 'step(1 / 60); render3D(); hud();', 'step(1 / 60); render3D(ms/1000); hud();')
     s = replace_once(s, 'shield: 0, shieldHits: 0,', 'shieldImpact: 99, shield: 0, shieldHits: 0,')
     s = replace_once(s, "  if (S.shield > 0) {\n    if (!S.shieldAll", "  if (S.shield > 0) {\n    S.shieldImpact=0;\n    if (!S.shieldAll")
-    s = replace_once(s, '    if (S.shield > 0) S.shield =', '    S.shieldImpact=Math.min(99,S.shieldImpact+w);\n    if (S.shield > 0) S.shield =')
+    s = replace_once(s, 'function step(dt) {', "function step(dt) {\n  if(S.mode!=='paused')S.shieldImpact=Math.min(99,S.shieldImpact+dt);")
     from reliability import integrate
     s = integrate(s, replace_once)
     return s
