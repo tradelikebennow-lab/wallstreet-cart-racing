@@ -11,7 +11,7 @@ function updateDriving(dt){
   const tier=P.driftTier;
   if(safe&&P.drifting&&tier>0){const duration=[0,.7,1.15,1.6][tier],mult=[1,1.22,1.35,1.5][tier];
    if(P.boost<=0){P.boost=duration;P.boostMult=mult;}else if(P.boostMult<=mult){P.boost=Math.max(P.boost,duration);P.boostMult=mult;}
-   P.v=Math.max(P.v,VMAX*mult);S.drifts=(S.drifts||0)+1;sfx.boost();setRaceFeedback(['','MINI TURBO!','SUPER TURBO!','ULTRA TURBO!'][tier],['','#5dc8ff','#ffb046','#f27bdf'][tier]);G3?.emit('use','MOON');
+   P.v=Math.max(P.v,VMAX*mult);S.drifts=(S.drifts||0)+1;sfx.boost();setRaceFeedback(['','MINI TURBO!','SUPER TURBO!','ULTRA TURBO!'][tier],['','#5dc8ff','#ffb046','#f27bdf'][tier]);G3?.emitItemFeedback({type:'turbo',kind:'MOON',level:tier});
   }
   cancelDrift();
  }

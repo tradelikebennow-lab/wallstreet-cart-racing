@@ -8,6 +8,7 @@ const {openGame}=require('./browser-lib.cjs');
   assert.equal((await p.evaluate(()=>raceQA.snapshot())).drift.tier,3,'A full drift must reach tier three');
   await p.keyboard.up('Shift');await p.keyboard.up('ArrowRight');await p.evaluate(()=>advanceTime(20));
   assert.equal(await p.evaluate(()=>raceQA.P.boostMult),1.5);
+  const turbo=await p.evaluate(()=>({fx:get3DInfo().effects.itemFeedback,held:raceQA.S.slots[0]}));assert.equal(turbo.fx?.type,'turbo','drift release still emits its world cue');assert.equal(turbo.fx.level,3);assert.equal(turbo.held.k,'SHORT','drift turbo does not consume a held item');
   await p.evaluate(()=>{raceQA.clean();raceQA.holdDrift(true);raceQA.keys.r=true;advanceTime(800)});
   await p.keyboard.press('p');await p.locator('#bResume').click();await p.evaluate(()=>{raceQA.keys.r=false;advanceTime(20)});
   assert.equal(await p.evaluate(()=>raceQA.P.boost),0,'Pause must cancel drift without a boost');
