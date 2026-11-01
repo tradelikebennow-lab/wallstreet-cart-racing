@@ -1,0 +1,322 @@
+{
+  "baseline": "372d9e0",
+  "fixture": "tests/device-budgets.cjs",
+  "deviceViewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "dpr": 2
+    },
+    "phone": {
+      "width": 390,
+      "height": 844,
+      "dpr": 3,
+      "coarsePointer": true
+    }
+  },
+  "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+  "measurement": "Matched static 3-sector states, manual profiles, software WebGL; work counters, not device FPS, frame latency, heat or battery. Rivals, Trump, held items and shield remain present.",
+  "scenarios": [
+    {
+      "device": "desktop",
+      "quality": "standard",
+      "station": 60,
+      "before": {
+        "backingPixels": 3317760,
+        "overlayPixels": 5184000,
+        "triangles": 286760,
+        "drawCalls": 628,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 101,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 2397816,
+        "overlayPixels": 2397816,
+        "triangles": 268040,
+        "drawCalls": 628,
+        "crowdUpdates": 36,
+        "shadowEnabled": true,
+        "geometries": 101,
+        "objects": 169
+      }
+    },
+    {
+      "device": "desktop",
+      "quality": "standard",
+      "station": 1450,
+      "before": {
+        "backingPixels": 3317760,
+        "overlayPixels": 5184000,
+        "triangles": 244836,
+        "drawCalls": 578,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 105,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 2397816,
+        "overlayPixels": 2397816,
+        "triangles": 232356,
+        "drawCalls": 578,
+        "crowdUpdates": 48,
+        "shadowEnabled": true,
+        "geometries": 105,
+        "objects": 169
+      }
+    },
+    {
+      "device": "desktop",
+      "quality": "standard",
+      "station": 2850,
+      "before": {
+        "backingPixels": 3317760,
+        "overlayPixels": 5184000,
+        "triangles": 246706,
+        "drawCalls": 579,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 109,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 2397816,
+        "overlayPixels": 2397816,
+        "triangles": 227986,
+        "drawCalls": 579,
+        "crowdUpdates": 36,
+        "shadowEnabled": true,
+        "geometries": 109,
+        "objects": 169
+      }
+    },
+    {
+      "device": "desktop",
+      "quality": "economy",
+      "station": 60,
+      "before": {
+        "backingPixels": 1296000,
+        "overlayPixels": 5184000,
+        "triangles": 286760,
+        "drawCalls": 628,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 109,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 748980,
+        "overlayPixels": 748980,
+        "triangles": 237000,
+        "drawCalls": 628,
+        "crowdUpdates": 18,
+        "shadowEnabled": false,
+        "geometries": 109,
+        "objects": 169
+      }
+    },
+    {
+      "device": "desktop",
+      "quality": "economy",
+      "station": 1450,
+      "before": {
+        "backingPixels": 1296000,
+        "overlayPixels": 5184000,
+        "triangles": 244836,
+        "drawCalls": 578,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 109,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 748980,
+        "overlayPixels": 748980,
+        "triangles": 219748,
+        "drawCalls": 578,
+        "crowdUpdates": 24,
+        "shadowEnabled": false,
+        "geometries": 109,
+        "objects": 169
+      }
+    },
+    {
+      "device": "desktop",
+      "quality": "economy",
+      "station": 2850,
+      "before": {
+        "backingPixels": 1296000,
+        "overlayPixels": 5184000,
+        "triangles": 246706,
+        "drawCalls": 579,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 109,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 748980,
+        "overlayPixels": 748980,
+        "triangles": 217402,
+        "drawCalls": 579,
+        "crowdUpdates": 18,
+        "shadowEnabled": false,
+        "geometries": 109,
+        "objects": 169
+      }
+    },
+    {
+      "device": "phone",
+      "quality": "standard",
+      "station": 60,
+      "before": {
+        "backingPixels": 842400,
+        "overlayPixels": 1316640,
+        "triangles": 278404,
+        "drawCalls": 600,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 101,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 842400,
+        "overlayPixels": 842400,
+        "triangles": 259684,
+        "drawCalls": 600,
+        "crowdUpdates": 36,
+        "shadowEnabled": true,
+        "geometries": 101,
+        "objects": 169
+      }
+    },
+    {
+      "device": "phone",
+      "quality": "standard",
+      "station": 1450,
+      "before": {
+        "backingPixels": 842400,
+        "overlayPixels": 1316640,
+        "triangles": 227118,
+        "drawCalls": 513,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 103,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 842400,
+        "overlayPixels": 842400,
+        "triangles": 214638,
+        "drawCalls": 513,
+        "crowdUpdates": 48,
+        "shadowEnabled": true,
+        "geometries": 103,
+        "objects": 169
+      }
+    },
+    {
+      "device": "phone",
+      "quality": "standard",
+      "station": 2850,
+      "before": {
+        "backingPixels": 842400,
+        "overlayPixels": 1316640,
+        "triangles": 240226,
+        "drawCalls": 564,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 107,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 842400,
+        "overlayPixels": 842400,
+        "triangles": 221506,
+        "drawCalls": 564,
+        "crowdUpdates": 36,
+        "shadowEnabled": true,
+        "geometries": 107,
+        "objects": 169
+      }
+    },
+    {
+      "device": "phone",
+      "quality": "economy",
+      "station": 60,
+      "before": {
+        "backingPixels": 329160,
+        "overlayPixels": 1316640,
+        "triangles": 278404,
+        "drawCalls": 600,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 107,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 329160,
+        "overlayPixels": 329160,
+        "triangles": 228644,
+        "drawCalls": 600,
+        "crowdUpdates": 18,
+        "shadowEnabled": false,
+        "geometries": 107,
+        "objects": 169
+      }
+    },
+    {
+      "device": "phone",
+      "quality": "economy",
+      "station": 1450,
+      "before": {
+        "backingPixels": 329160,
+        "overlayPixels": 1316640,
+        "triangles": 227118,
+        "drawCalls": 513,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 107,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 329160,
+        "overlayPixels": 329160,
+        "triangles": 202030,
+        "drawCalls": 513,
+        "crowdUpdates": 24,
+        "shadowEnabled": false,
+        "geometries": 107,
+        "objects": 169
+      }
+    },
+    {
+      "device": "phone",
+      "quality": "economy",
+      "station": 2850,
+      "before": {
+        "backingPixels": 329160,
+        "overlayPixels": 1316640,
+        "triangles": 240226,
+        "drawCalls": 564,
+        "crowdUpdates": 72,
+        "shadowEnabled": true,
+        "geometries": 107,
+        "objects": 169
+      },
+      "after": {
+        "backingPixels": 329160,
+        "overlayPixels": 329160,
+        "triangles": 210922,
+        "drawCalls": 564,
+        "crowdUpdates": 18,
+        "shadowEnabled": false,
+        "geometries": 107,
+        "objects": 169
+      }
+    }
+  ],
+  "errors": []
+}
