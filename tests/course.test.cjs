@@ -1,0 +1,5 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const C=require('../work/3d/course.js');
+test('bank gives a shared continuous sloped surface',()=>{assert(C.sampleCourse(255,1).height>C.sampleCourse(255,-1).height);for(const s of [180,330,410,442,475])assert(Math.abs(C.sampleCourse(s-.001,0).height-C.sampleCourse(s+.001,0).height)<.002);assert.equal(C.sampleCourse(600,0).height,0);});
+test('ramp crossing fires once including long steps',()=>{assert.equal(C.crossedRampExit(441,443).id,'opening-ramp');assert.equal(C.crossedRampExit(443,444),null);assert.equal(C.crossedRampExit(442,443),null);assert(C.crossedRampExit(400,480));});
+test('hazard volumes exclude approaches and landings',()=>{for(let s=390;s<=505;s++)assert.equal(C.isSpawnClear(s,1),false);assert.equal(C.isSpawnClear(510,20),false);assert(C.isSpawnClear(550,2));});
+test('world height converts shared road-relative elevation once',()=>{const s=255,x=.8,origin=240;assert.equal(C.worldHeight(s,x,1,origin)-C.worldHeight(s,x,0,origin),2);assert.equal(C.worldHeight(s,x,0,origin),2*(C.sampleCourse(s,x).height-C.sampleCourse(origin,0).height));});

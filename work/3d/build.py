@@ -33,6 +33,8 @@ from enhance import enhance
 s=enhance(s)
 from stages import stages
 s=stages(s)
+from upgrade import upgrade
+s=upgrade(s)
 s=s.replace('<script>', '<!-- Three.js license\n'+Path('work/3d/THREE-LICENSE.txt').read_text()+'\n-->\n<script>',1)
 Path('outputs/bull-run-3d.html').write_text(s)
 Path('outputs/THREE-LICENSE.txt').write_text(Path('work/3d/THREE-LICENSE.txt').read_text())
