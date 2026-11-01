@@ -9,7 +9,7 @@ def replace_once(source, old, new):
 
 
 def upgrade(s):
-    helpers = '\n'.join(Path('work/3d/' + name + '.js').read_text() for name in ['handling', 'course', 'camera'])
+    helpers = '\n'.join(Path('work/3d/' + name + '.js').read_text() for name in ['handling', 'course', 'camera', 'collisions', 'reliability'])
     s = replace_once(s, '// Real WebGL scene.', helpers + '\n// Real WebGL scene.')
     s = replace_once(s, 'Object.assign(P, { drifting:false,', 'Object.assign(P, { vx:0, heading:0, rampLaunchId:null, drifting:false,')
     old = '''  P.steer += (st - P.steer) * Math.min(1, w * 14);
@@ -32,4 +32,6 @@ def upgrade(s):
     s = replace_once(s, 'shield: 0, shieldHits: 0,', 'shieldImpact: 99, shield: 0, shieldHits: 0,')
     s = replace_once(s, "  if (S.shield > 0) {\n    if (!S.shieldAll", "  if (S.shield > 0) {\n    S.shieldImpact=0;\n    if (!S.shieldAll")
     s = replace_once(s, '    if (S.shield > 0) S.shield =', '    S.shieldImpact=Math.min(99,S.shieldImpact+w);\n    if (S.shield > 0) S.shield =')
+    from reliability import integrate
+    s = integrate(s, replace_once)
     return s

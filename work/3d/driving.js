@@ -19,6 +19,8 @@ function updateDriving(dt){
  if(held&&safe&&Math.abs(steer)>.2){P.drifting=true;P.driftCharge=Math.min(2.15,P.driftCharge+dt);const tier=P.driftCharge>=1.85?3:P.driftCharge>=1.2?2:P.driftCharge>=.55?1:0;
   if(tier>P.driftTier)tone(560+tier*220,.12,'triangle',.055,100);P.driftTier=tier;
  }else if(P.drifting){cancelDrift();}
+}
+function updateDrivingHUD(){
  const meter=$('driftMeter');if(meter){meter.hidden=!P.drifting;if(P.drifting){meter.dataset.tier=P.driftTier;$('driftFill').style.width=Math.round(P.driftCharge/2.15*100)+'%';$('driftText').textContent=P.driftTier?['','MINI TURBO','SUPER TURBO','ULTRA TURBO'][P.driftTier]+' · RELEASE TO BOOST':'HOLD + STEER TO CHARGE';}}
  const speed=$('speedValue');if(speed){const v=Math.round(P.v*5.76).toString();if(speed.textContent!==v)speed.textContent=v;}
 }
