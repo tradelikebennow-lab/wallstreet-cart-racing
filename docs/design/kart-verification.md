@@ -24,3 +24,7 @@ Keep P/S as authoritative gameplay state and use small pure numerical helpers in
 The simulation runs at 120 Hz. Browser catch-up accepts at most 250 ms. Explicit manual advances retain countdown remainder into play; pause and terminal mode transitions discard old-mode debt. Buffered jump takes precedence over queued slide on landing.
 
 Scene detail and resource counts were checked. No device FPS improvement is claimed from software-rendered browser tests. Arcade handling and the new course section still benefit from human playtesting for taste and balance.
+
+## Delivery
+
+Feature branch `kart-feel-upgrade` is available in [PR 1](https://github.com/tradelikebennow-lab/wallstreet-cart-racing/pull/1). The updated HTML and desktop/phone/ramp previews are in `outputs/`.

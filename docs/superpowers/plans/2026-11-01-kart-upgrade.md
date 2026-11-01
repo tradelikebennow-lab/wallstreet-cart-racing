@@ -73,5 +73,5 @@ Files: renderer and pause options. Tests: renderer introspection and repeat-race
 ## Delivery gate
 - [x] Run Node suite, repeatable build, complete protected race, all hazards/items, touch and keyboard, pause/results/replay, mobile bounds and news strip checks.
 - [x] Independent review of final diff. Fix important findings with regression tests.
-- [ ] Update README and final screenshots, copy outputs to chat deliverables, open preview.
-- [ ] Push feature branch and open ready PR. Verify remote head and PR URL. Do not merge.
+- [x] Update README and final screenshots, copy outputs to chat deliverables, open preview.
+- [x] Push feature branch and open ready PR. Verify remote head and PR URL. Do not merge.
