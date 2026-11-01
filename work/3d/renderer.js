@@ -8,7 +8,7 @@ function init3D(){
    const msg=document.createElement('div');msg.className='webgl-error';msg.innerHTML='<h2>3D graphics are unavailable</h2><p>This edition needs WebGL. Try a browser with hardware acceleration enabled.</p><a href="bull-run-grand-prix.html">Open the 2D edition</a>';game.append(msg);$('bStart').disabled=true;return;
  }
  renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
- const camera=new T.PerspectiveCamera(53,innerWidth/innerHeight,.1,500);
+ const camera=new T.PerspectiveCamera(53,innerWidth/innerHeight,.1,500);scene.add(camera);
  scene.background=new T.Color('#8ad9f2');scene.fog=new T.Fog('#b3e4eb',65,240);
  const hemi=new T.HemisphereLight('#d9f7ff','#8a8655',2.15);scene.add(hemi);
  const sun=new T.DirectionalLight('#fff0cb',3.1);sun.position.set(-28,48,20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-35,right:35,top:48,bottom:-38,near:1,far:135});sun.shadow.bias=-.0003;sun.shadow.normalBias=.055;sun.target.position.set(0,0,-25);scene.add(sun,sun.target);
@@ -81,7 +81,7 @@ function init3D(){
   scene.add(g);return {g,body,driver,wheels,bubble,shadow,flames};
  }
  const player=makeKart('#ef534b',7),racers=RIVALS.map((a,i)=>makeKart(a.jacket,i+1,a.skin));
- player.bubble.material.dispose();
+ player.body.userData.playerBody=true;player.bubble.material.dispose();
  const shieldMat=new T.ShaderMaterial({transparent:true,depthWrite:false,side:T.FrontSide,uniforms:{flowTime:{value:0},impact:{value:99},shieldOn:{value:0},tint:{value:new T.Color('#77dfff')}},vertexShader:`varying vec3 surfaceNormal;varying vec3 eyeDirection;varying vec2 shieldUV;void main(){vec4 p=modelViewMatrix*vec4(position,1.);surfaceNormal=normalize(normalMatrix*normal);eyeDirection=normalize(-p.xyz);shieldUV=uv;gl_Position=projectionMatrix*p;}`,fragmentShader:`uniform float flowTime;uniform float impact;uniform float shieldOn;uniform vec3 tint;varying vec3 surfaceNormal;varying vec3 eyeDirection;varying vec2 shieldUV;void main(){float rim=pow(1.-abs(dot(normalize(surfaceNormal),normalize(eyeDirection))),2.);float ripple=exp(-pow((distance(shieldUV,vec2(.25,.5))-impact*.9)*20.,2.))*max(0.,1.-impact/.65);float lines=pow(.5+.5*sin(shieldUV.y*65.-flowTime*3.),12.);float alpha=shieldOn*(.06+rim*.3+lines*.055)+ripple*.85+max(0.,1.-impact/.65)*(.12+rim*.35);gl_FragColor=vec4(tint+vec3(ripple*.5),alpha);}`});
  player.bubble.material=shieldMat;
 
@@ -118,7 +118,7 @@ function init3D(){
  }
  function pickupModel(e){const g=new T.Group(),art=powerup(e.kind);art.position.y=1.35;art.scale.setScalar(1.12);g.add(art);g.userData.art=art;
   const color=WPN[e.kind].col;const ring=new T.Mesh(new T.TorusGeometry(.55,.035,6,32),new T.MeshBasicMaterial({color}));ring.rotation.x=Math.PI/2;ring.position.y=.10;g.add(ring);
-  const label=sign(g,ITEM_META[e.kind].action,0,.30,.48,1.65,.42,'#173b50','#ffffff');g.userData.isPickup=true;return g;}
+  g.userData.isPickup=true;return g;}
  function bakeItemIcons(){
   const icons={},iconScene=new T.Scene(),ic=new T.OrthographicCamera(-1.25,1.25,1.25,-1.25,.1,20);ic.position.set(0,.2,6);ic.lookAt(0,0,0);iconScene.add(new T.HemisphereLight('#ffffff','#b1b9d4',2.8));const light=new T.DirectionalLight('#fff2db',3);light.position.set(-3,4,5);iconScene.add(light);
   const target=new T.WebGLRenderTarget(128,128,{format:T.RGBAFormat}),pixels=new Uint8Array(128*128*4),oldColor=renderer.getClearColor(new T.Color()),oldAlpha=renderer.getClearAlpha(),oldTarget=renderer.getRenderTarget();
@@ -129,6 +129,8 @@ function init3D(){
 
  const courseSigns=[];
  for(const [distance,label]of [[160,'BANKED CORNER >>>'],[390,'RAMP AHEAD >>>'],[425,'LAUNCH >>>']])for(const side of [-1,1]){const g=new T.Group();cylinder(g,chrome,0,.9,0,.06,1.8);sign(g,label,0,1.7,0,2.6,.6,'#ffcc4b','#263f53');scene.add(g);courseSigns.push({g,s:distance,x:side*2.2});}
+ const cueTextures=new Map();for(const [key,text]of [...RIVALS.map((r,i)=>['r'+i,r.short]),...ORDER.map(k=>[k,ITEM_META[k].action])])cueTextures.set(key,textTexture(text,'#ffffff','#173b50',256,64));
+ const cueGeometry=new T.PlaneGeometry(1,.25),cues=Array.from({length:3},()=>{const m=new T.Mesh(cueGeometry,new T.MeshBasicMaterial({transparent:true,depthWrite:false}));m.userData.worldCue=true;m.visible=false;m.renderOrder=5;scene.add(m);return m;});let visibleCues=0;
  const entityModels=new Map();
  function obstacle(e){const g=new T.Group(),span=(e.span||1)*2.8,type=e.type;const color=WPN[e.kind]?.col||'#ffb950';
   if(e.cat==='coin'){
@@ -275,13 +277,16 @@ function init3D(){
   sparkMesh.visible=drift;if(drift){sparkMesh.material.color.set(P.drifting?['#a7d9ff','#55c7ff','#ffb448','#ef7ce3'][P.driftTier]:'#fff4b7');for(let i=0;i<16;i++){const age=(time*3+i/16)%1,side=i%2?1:-1;const p=coord(P.x+side*(.8+age*.35)/2.8,-(1+age*3)/1.6,.15+Math.sin(age*Math.PI)*.35);inst(sparkMesh,i,p.x,p.y,p.z,.025,.035,.12*(1-age));}sparkMesh.instanceMatrix.needsUpdate=true;}
   player.bubble.visible=(S.shield>0||P.diamond>0||S.shieldImpact<.65);player.bubble.position.y=1+P.y*2;shieldMat.uniforms.flowTime.value=time;shieldMat.uniforms.impact.value=S.shieldImpact;shieldMat.uniforms.shieldOn.value=S.shield>0||P.diamond>0?1:0;shieldMat.uniforms.tint.value.set(P.diamond>0?'#ffd98b':'#77dfff');
   confetti.visible=S.mode==='finish'&&!reducedMotion.matches;if(confetti.visible){for(let i=0;i<64;i++){const age=(S.finT*.45+hash(i))%1;inst(confetti,i,P.x*2.8+(hash(i+99)-.5)*16,8-age*9,-hash(i+31)*18,.075,.19,.01,time+i,time*.7+i);}confetti.instanceMatrix.needsUpdate=true;}
+  visibleCues=0;cues.forEach(m=>m.visible=false);
+  const candidates=[...S.rivals.map((a,i)=>({s:a.s,x:a.x,y:3+(a.y||0)*2,key:'r'+i})),...S.ents.filter(e=>e.cat==='item'&&!e.dead).map(e=>({s:e.s,x:e.x,y:2.8,key:e.kind}))].filter(a=>a.s-P.s>2&&a.s-P.s<38).sort((a,b)=>a.s-b.s);
+  for(const a of candidates){if(visibleCues===cues.length)break;const point=coord(a.x,a.s-P.s,a.y),projected=point.clone().project(camera);if(Math.abs(projected.x)>.83||projected.y<-.65||projected.y>.68)continue;const m=cues[visibleCues++];m.visible=true;m.position.copy(point);m.quaternion.copy(camera.quaternion);const size=Math.max(2,Math.min(4.2,point.distanceTo(camera.position)*.105));m.scale.setScalar(size);m.material.map=cueTextures.get(a.key);}
   renderer.render(scene,camera);
   effectInfo={shieldVisible:player.bubble.visible,shieldImpact:S.shieldImpact,trailCount,trailCapacity:140,rampArrows:arrowCount,ambientTime,shadersReady:renderer.info.programs.every(p=>p.diagnostics?.runnable!==false)};
  }
  const screenVec=new T.Vector3();
  const icons=bakeItemIcons();
  G3={icons,emit,renderer,scene,camera,update,course:Course,resetCamera(){cameraState=null;},worldPoint:(s,x,y=0)=>coord(x,s-P.s,y*2),resize(){renderer.setSize(W,H,false);camera.aspect=W/H;camera.updateProjectionMatrix();requestAnimationFrame(()=>render3D(0));},project(lane,z,h){const d=z-PZ;screenVec.copy(coord(lane,d,h*2)).project(camera);return {x:(screenVec.x*.5+.5)*W,y:(-.5*screenVec.y+.5)*H,u:laneUnitPx*4/(4+Math.max(z,-2)),s:4/(4+Math.max(z,-2))};}};
- window.get3DInfo=()=>({webgl:!!renderer.getContext(),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls,objects:scene.children.length,geometries:renderer.info.memory.geometries,effects:effectInfo,renderer:'Three.js WebGL',revision:T.REVISION,camera:{position:camera.position.toArray(),fov:camera.fov,roll:cameraState?.roll||0}});
+ window.get3DInfo=()=>({webgl:!!renderer.getContext(),triangles:renderer.info.render.triangles,drawCalls:renderer.info.render.calls,objects:scene.children.length,geometries:renderer.info.memory.geometries,effects:effectInfo,presentation:{labelCount:visibleCues,labelCapacity:3,labelDistance:38},renderer:'Three.js WebGL',revision:T.REVISION,camera:{position:camera.position.toArray(),fov:camera.fov,roll:cameraState?.roll||0}});
  surface.addEventListener('webglcontextlost',e=>{e.preventDefault();if(S.mode==='play')setMode('paused');});
 }
 function render3D(frameDt=1/60){
