@@ -29,4 +29,7 @@ def upgrade(s):
     s = replace_once(s, 'player: { s: +P.s.toFixed(1),', 'player: { vx:+(P.vx||0).toFixed(3), heading:+(P.heading||0).toFixed(3), rampLaunchId:P.rampLaunchId, s: +P.s.toFixed(1),')
     s = replace_once(s, '  render3D();\n  if (S.mode', '  render3D(dt);\n  if (S.mode')
     s = replace_once(s, 'step(1 / 60); render3D(); hud();', 'step(1 / 60); render3D(ms/1000); hud();')
+    s = replace_once(s, 'shield: 0, shieldHits: 0,', 'shieldImpact: 99, shield: 0, shieldHits: 0,')
+    s = replace_once(s, "  if (S.shield > 0) {\n    if (!S.shieldAll", "  if (S.shield > 0) {\n    S.shieldImpact=0;\n    if (!S.shieldAll")
+    s = replace_once(s, '    if (S.shield > 0) S.shield =', '    S.shieldImpact=Math.min(99,S.shieldImpact+w);\n    if (S.shield > 0) S.shield =')
     return s
