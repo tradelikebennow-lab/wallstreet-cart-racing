@@ -60,7 +60,7 @@ npm test
 npm run test:browser
 ```
 
-Browser checks cover keyboard and simultaneous touch drifting, items and hazards, jump buffering, collision protection rules, pause, replay, a protected full race, mobile layouts, news placement, shader compilation, labels, graphics settings, and resource cleanup. The protected race uses test-only invulnerability and centering to exercise progression; it is not a difficulty or balance test. Screenshots go to the ignored `.work/` directory. Scene counts are diagnostics, not an FPS benchmark.
+Browser checks cover keyboard and simultaneous touch drifting, items and hazards, jump buffering, collision protection rules, pause, replay, a protected full race, mobile layouts, news placement, shader compilation, labels, graphics settings, and resource cleanup. The protected race uses test-only invulnerability and centering to exercise progression; it is not a difficulty or balance test. Screenshots go to the ignored `.work/` directory. Scene counts are diagnostics, not an FPS benchmark. Hidden-news ticker growth is covered by the Speedway/Circuit Breaker regression. See [the stall investigation](docs/performance/2026-11-01-stalls.md).
 
 `PLAYWRIGHT_MODULE` can point to an existing Playwright installation when dependencies are provided by a development environment.
 
