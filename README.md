@@ -16,7 +16,7 @@ Then visit http://localhost:8000.
 
 ## Editions
 
-- **Bull Run 3D:** the latest version, with momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, effects, and arcade audio.
+- **Bull Run 3D:** the latest version, with momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, charged item stacking, effects, and arcade audio.
 - **Bull Run Grand Prix:** the earlier colorful 2D racing edition.
 - **Midnight Exchange:** the alternative visual edition.
 
@@ -26,6 +26,7 @@ Then visit http://localhost:8000.
 - Hold Shift while steering, then release Shift: drift turbo.
 - Up arrow or Space: jump; down arrow: slide.
 - 1, 2, 3: use items; P: pause.
+- Matching pickups upgrade a held item to level 3. MAX READY shows its strongest version. Another matching pickup awards cash. Using the item consumes the slot at any level.
 - Mobile: hold a screen edge to steer. Hold DRIFT with another finger, then release it to boost.
 - Pause menu: arcade music and Standard/Economy graphics. SND button: mute music and effects.
 - The opening course includes a banked corner and an automatic launch ramp with warning signs.

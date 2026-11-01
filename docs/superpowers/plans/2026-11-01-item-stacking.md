@@ -38,22 +38,26 @@ Files: new work/3d/item-feedback.js and tests/item-feedback.test.cjs; modify wor
 
 Interfaces: ItemFeedback record {type,slot,kind,fromLevel,level,bonus}, types collect/upgrade/max-bonus/use. G3.emitItemFeedback(event) replaces G3.emit at all callers. Renderer diagnostics effects.itemFeedback includes type,kind,level,age,particleCount for bounded lifetime verification. Persistent slot badge and pips reflect inventory.
 
-- [ ] Write behavioral unit tests for collect, in-place upgrade snapshots, MAX cash receipt, failed pickup/use and consumption. Run to confirm missing behavior.
-- [ ] Implement pure classification, boundary dispatch, truthful receipts, tiered sound, slot paint and bounded cues. Replace inherited cosmetic duplicates using asserted build hooks.
-- [ ] Reuse the renderer pool with kind-specific patterns and level intensity. Explicitly clear on reset/mode/reduced-motion and freeze during pause.
-- [ ] Run unit tests and builder. Confirm generated HTML uses the new path and no extra network dependency.
-- [ ] Commit this verified unit after browser integration passes.
+- [x] Write behavioral unit tests for collect, in-place upgrade snapshots, MAX cash receipt, failed pickup/use and consumption. Run to confirm missing behavior.
+- [x] Implement pure classification, boundary dispatch, truthful receipts, tiered sound, slot paint and bounded cues. Replace inherited cosmetic duplicates using asserted build hooks.
+- [x] Reuse the renderer pool with kind-specific patterns and level intensity. Explicitly clear on reset/mode/reduced-motion and freeze during pause.
+- [x] Run unit tests and builder. Confirm generated HTML uses the new path and no extra network dependency.
+- [x] Commit this verified unit after browser integration passes.
 
 ### Task 2: Verify the built game and deliver
 
 Files: tests/browser-lib.cjs, new tests/item-stacking.cjs, package.json, docs/design and outputs previews.
 
-- [ ] Add real-game browser cases for the Review Focus and seven item progressions. Run the feature assertion before implementation to observe failure.
-- [ ] Run the feature check after implementation, inspect screenshots and fix findings at their source.
-- [ ] Run npm test and all browser scripts including Speedway/Circuit Breaker stalls; check build reproducibility and git diff --check.
-- [ ] Obtain independent source review, address material findings with regression checks.
+- [x] Add real-game browser cases for the Review Focus and seven item progressions. Run the feature assertion before implementation to observe failure.
+- [x] Run the feature check after implementation, inspect screenshots and fix findings at their source.
+- [x] Run npm test and all browser scripts including Speedway/Circuit Breaker stalls; check build reproducibility and git diff --check.
+- [x] Obtain independent source review, address material findings with regression checks.
 - [ ] Commit, copy the user-facing game/screenshots, push the current feature branch and update PR #1 without merging.
 
 ## Design synthesis
 
 Root selected A's explicit receipt interface for fewer moving parts, with B's inventory-derived persistent presentation and mutation-boundary copies. Both agree on fixed pools and explicit lifecycle. Independent cross-judge result is recorded with verification.
+
+## Verification outcome
+
+The build is reproducible. All 43 Node tests and nine browser scripts passed. The final stacking script covers five viewports and actual touch use. Root inspected all final screenshots. Reviews found receipt lifecycle and compact-landscape issues, which were fixed and rechecked. Full race acceptance caught an old drift effect caller; it is migrated and covered.

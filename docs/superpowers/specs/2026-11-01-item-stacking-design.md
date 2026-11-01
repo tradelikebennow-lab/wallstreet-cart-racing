@@ -16,7 +16,7 @@ A uses explicit collect, upgrade, max-bonus and use receipts captured at mutatio
 
 ## Data and ownership
 
-S.slots remains authoritative. ItemFeedback is a tagged record with type, slot, kind, fromLevel, level and bonus. At most three transient HUD records and one renderer record exist. Copy numeric levels before pickupBase mutates them. Use a pure outcome classifier with a small public surface. The existing wrappers own dispatch. The renderer reuses its 24-instance pool and updates all shapes through a kind registry; no allocations or new scene nodes per event. Slot paint derives labels/segments from S.slots.
+S.slots remains authoritative. ItemFeedback is a tagged record with type, slot, kind, fromLevel, level and bonus. At most three transient HUD records and one renderer record exist. Copy numeric levels before pickupBase mutates them. Use a pure outcome classifier with a small public surface. The existing wrappers own dispatch. Drift release uses the same renderer with a separate turbo receipt containing kind MOON and the drift tier; it never enters slot classification or consumes inventory. The renderer reuses its 24-instance pool and updates all shapes through a kind registry; no allocations or new scene nodes per event. Slot paint derives labels/segments from S.slots.
 
 Explicitly clear feedback on reset and leaving play except pause. Pause freezes its clock and CSS animation. Reduced motion preserves badges and text while suppressing movement. Toggling it must not revive old effects. Use a local playing-time effect clock instead of the decorative ambient clock. Remove duplicate inherited pickup flashes/bursts and layout-forcing slot bumps only in the 3D build. Use exact-once generator hooks. Leave the 2D editions unchanged.
 

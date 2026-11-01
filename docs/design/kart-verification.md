@@ -7,8 +7,8 @@ The 3D edition gained handling momentum, a shared bank/ramp surface, a damped ch
 ## Automated evidence
 
 - Python standalone build succeeds. New integration hooks assert expected replacement counts.
-- `npm test` passes 36 numerical behavior tests for handling, course continuity and launches, camera bounds, relative-motion contacts and fixed stepping.
-- `npm run test:browser` drives the generated artifact through eight browser scripts. Checks cover keyboard and actual two-finger touch drift, all seven items and 13 hazard models, jump buffering, collision protection and clearance rules, pause/blur, results/replay, a protected three-sector race, portrait/landscape control bounds, top-strip news, shader compilation, effect limits, world-cue orientation, graphics controls and resource stability.
+- `npm test` passes 43 behavior tests for handling, course continuity and launches, camera bounds, relative-motion contacts and fixed stepping.
+- `npm run test:browser` drives the generated artifact through nine browser scripts. Checks cover keyboard and actual two-finger touch drift, all seven items and 13 hazard models, jump buffering, collision protection and clearance rules, pause/blur, results/replay, a protected three-sector race, portrait/landscape control bounds, top-strip news, shader compilation, effect limits, world-cue orientation, graphics controls and resource stability.
 - The protected full race uses test-only centering and protection. It verifies race progression, not difficulty or competitive balance.
 - Desktop, 390x844 portrait and 844x390 landscape screenshots were inspected. Camera framing was corrected after actual projected kart bounds showed HUD overlap.
 - The graphics control was checked through native keyboard typeahead and a real-origin persistence reload.
@@ -32,3 +32,7 @@ Feature branch `kart-feel-upgrade` is available in [PR 1](https://github.com/tra
 ## Playtest follow-up
 
 Speedway/Circuit Breaker stalls were traced to unbounded hidden ticker growth. The fix suspends unmeasurable tickers and caps the queue. A separate source review found no actionable issue. See [the investigation and measurements](../performance/2026-11-01-stalls.md).
+
+## Charged item follow-up
+
+The 3D edition now distinguishes collection, upgrades, MAX cash bonuses and use, with visible tier marks, charged badges, bounded item effects and tiered sounds. See [the item stacking verification](item-stacking-verification.md) for coverage, review findings and limits.
