@@ -33,8 +33,14 @@ from enhance import enhance
 s=enhance(s)
 from stages import stages
 s=stages(s)
-from upgrade import upgrade
+from upgrade import upgrade, replace_once
 s=upgrade(s)
+from competition import integrate as integrate_competition
+s=integrate_competition(s,replace_once)
+from devices import integrate as integrate_devices
+s=integrate_devices(s,replace_once)
+from controls import integrate as integrate_controls
+s=integrate_controls(s,replace_once)
 s=s.replace('<script>', '<!-- Three.js license\n'+Path('work/3d/THREE-LICENSE.txt').read_text()+'\n-->\n<script>',1)
 Path('outputs/bull-run-3d.html').write_text(s)
 Path('outputs/THREE-LICENSE.txt').write_text(Path('work/3d/THREE-LICENSE.txt').read_text())

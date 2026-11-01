@@ -4,8 +4,9 @@
   "scripts": {
     "build": "python3 work/3d/build.py",
     "test": "node --test tests/*.test.cjs",
-    "test:browser": "node tests/browser.cjs && node tests/acceptance.cjs && node tests/effects.cjs && node tests/reliability.cjs && node tests/reliability-contacts.cjs && node tests/collision-rules.cjs && node tests/presentation.cjs && node tests/stalls.cjs && node tests/item-stacking.cjs",
-    "profile:stalls": "node tests/profile-stalls.cjs"
+    "test:browser": "node tests/browser.cjs && node tests/acceptance.cjs && node tests/effects.cjs && node tests/reliability.cjs && node tests/reliability-contacts.cjs && node tests/collision-rules.cjs && node tests/presentation.cjs && node tests/stalls.cjs && node tests/item-stacking.cjs && node tests/difficulty.cjs && node tests/device-controls.cjs && node tests/device-layouts.cjs",
+    "profile:stalls": "node tests/profile-stalls.cjs",
+    "profile:devices": "node tests/device-budgets.cjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"

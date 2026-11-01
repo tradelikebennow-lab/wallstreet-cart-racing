@@ -14,6 +14,17 @@ const Collision = (() => {
   return {tEnter,tExit};
  }
  function heightAtContact(y0,y1,t){return y0+(y1-y0)*t;}
- return {sweepAabb,heightAtContact};
+ function activeHazardContact(entity,oldEntity,overlap){
+  if(!overlap||!entity.armed)return null;
+  if(entity.type!=='GAVEL')return overlap;
+  const start=(oldEntity.t||0)*.85+(entity.ph0||0),motion=((entity.t||0)-(oldEntity.t||0))*.85;
+  if(motion===0){const phase=start%1;return phase>.52&&phase<.92?overlap:null;}
+  for(let cycle=Math.floor(start+motion*overlap.tEnter);cycle<=Math.floor(start+motion*overlap.tExit);cycle++){
+   const lo=Math.max(overlap.tEnter,(cycle+.52-start)/motion),hi=Math.min(overlap.tExit,(cycle+.92-start)/motion);
+   if(lo<hi)return {tEnter:lo,tExit:hi};
+  }
+  return null;
+ }
+ return {sweepAabb,heightAtContact,activeHazardContact};
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=Collision;

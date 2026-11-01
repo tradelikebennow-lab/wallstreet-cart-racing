@@ -33,18 +33,7 @@ function jump(){requestJump();}''')
     if(y1>y0&&at(hi)>=height)hi=Math.min(hi,(height-y0)/(y1-y0));
     return {tEnter:lo,tExit:hi};
   };
-  const activeContact=(e,overlap)=>{
-    if(!overlap||!e.armed)return null;
-    if(e.type!=='GAVEL')return overlap;
-    const start=remember(e).t*.85+e.ph0,motion=(e.t-remember(e).t)*.85;
-    if(motion===0)return isActive(e)?overlap:null;
-    for(let cycle=Math.floor(start+motion*overlap.tEnter);cycle<=Math.floor(start+motion*overlap.tExit);cycle++){
-      const lo=Math.max(overlap.tEnter,(cycle+.52-start)/motion);
-      const hi=Math.min(overlap.tExit,(cycle+.92-start)/motion);
-      if(lo<hi)return {tEnter:lo,tExit:hi};
-    }
-    return null;
-  };
+  const activeContact=(e,overlap)=>Collision.activeHazardContact(e,remember(e),overlap);
   consumeJump();
   let w = dt;''')
     patch('P.land = 0.14; if (P.slideQ)', 'P.land = 0.14; consumeJump(); if (P.slideQ)')

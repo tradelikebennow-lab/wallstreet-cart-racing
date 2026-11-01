@@ -1,9 +1,14 @@
+let driftInput=null;
+function clearDriftInput(){
+ const input=driftInput;driftInput=null;
+ if(input?.kind==='pointer'){try{$('bDrift').releasePointerCapture(input.id);}catch{}}
+}
 function holdDrift(on,release=true){
  if(on){if(S.mode!=='play')return;P.driftHeld=true;P.driftReleased=false;}
  else{P.driftHeld=false;P.driftReleased=release&&S.mode==='play';if(!release)cancelDrift();}
  $('bDrift')?.setAttribute('aria-pressed',String(P.driftHeld));
 }
-function cancelDrift(){P.drifting=false;P.driftCharge=0;P.driftTier=0;P.driftReleased=false;P.driftHeld=false;const meter=$('driftMeter');if(meter)meter.hidden=true;$('bDrift')?.setAttribute('aria-pressed','false');}
+function cancelDrift(){clearDriftInput();P.drifting=false;P.driftCharge=0;P.driftTier=0;P.driftReleased=false;P.driftHeld=false;const meter=$('driftMeter');if(meter)meter.hidden=true;$('bDrift')?.setAttribute('aria-pressed','false');}
 function updateDriving(dt){
  const steer=clamp((keys.r?1:0)-(keys.l?1:0)+touchSteer,-1,1);
  const safe=S.mode==='play'&&Math.abs(P.x)<1.50&&P.y<.06&&P.v>12&&P.spin<=0&&P.freeze<=0&&P.reverse<=0;
@@ -25,10 +30,12 @@ function updateDrivingHUD(){
  const speed=$('speedValue');if(speed){const v=Math.round(P.v*5.76).toString();if(speed.textContent!==v)speed.textContent=v;}
 }
 function initDrivingControls(){
- window.addEventListener('keydown',e=>{if(e.key==='Shift'){e.preventDefault();if(!e.repeat)holdDrift(true);}});
- window.addEventListener('keyup',e=>{if(e.key==='Shift'){e.preventDefault();holdDrift(false);}});
- window.addEventListener('blur',()=>holdDrift(false,false));
- const b=$('bDrift');b.addEventListener('pointerdown',e=>{e.preventDefault();audio();holdDrift(true);b.setPointerCapture(e.pointerId);});
- const release=e=>{e.preventDefault();holdDrift(false,e.type!=='pointercancel');};b.addEventListener('pointerup',release);b.addEventListener('pointercancel',release);b.addEventListener('lostpointercapture',()=>{if(P.driftHeld)holdDrift(false,false);});
- b.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();if(!e.repeat)holdDrift(true);}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();holdDrift(false);}});
+ const begin=input=>{if(S.mode!=='play'||driftInput||P.driftHeld)return false;driftInput=input;holdDrift(true);return true;};
+ const end=(kind,id,release)=>{if(driftInput?.kind!==kind||driftInput.id!==id)return;driftInput=null;holdDrift(false,release);};
+ window.addEventListener('keydown',e=>{if(e.key==='Shift'){e.preventDefault();if(!e.repeat)begin({kind:'key',id:e.key});}});
+ window.addEventListener('keyup',e=>{if(e.key==='Shift'){e.preventDefault();end('key',e.key,true);}});
+ window.addEventListener('blur',cancelDrift);
+ const b=$('bDrift');b.addEventListener('pointerdown',e=>{e.preventDefault();if(begin({kind:'pointer',id:e.pointerId})){audio();b.setPointerCapture(e.pointerId);}});
+ const release=e=>{e.preventDefault();end('pointer',e.pointerId,e.type==='pointerup');};for(const event of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(event,release);
+ b.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();if(!e.repeat)begin({kind:'key',id:e.key});}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();end('key',e.key,true);}});
 }

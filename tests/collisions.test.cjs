@@ -68,3 +68,16 @@ test('helper also embeds directly into the standalone IIFE without CommonJS', ()
   close(hit.tEnter, .4);
   close(hit.tExit, .6);
 });
+
+test('active hazard clipping retains only the GAVEL down interval',()=>{
+ const {activeHazardContact}=require('../work/3d/collisions.js');
+ const gavel=(phase)=>({type:'GAVEL',armed:true,t:phase/.85,ph0:0});
+ const leaving=activeHazardContact(gavel(.925),gavel(.9179166667),{tEnter:1/30,tExit:1});
+ close(leaving.tEnter,1/30);assert(leaving.tExit>.29&&leaving.tExit<.30);
+ assert.equal(activeHazardContact(gavel(.522),gavel(.5149166667),{tEnter:0,tExit:2/3}),null);
+ assert.equal(activeHazardContact(gavel(.6),gavel(.6),{tEnter:0,tExit:1}).tExit,1);
+ assert.equal(activeHazardContact(gavel(.2),gavel(.2),{tEnter:0,tExit:1}),null);
+ assert.equal(activeHazardContact({...gavel(.6),armed:false},gavel(.6),{tEnter:0,tExit:1}),null);
+ const wrap=activeHazardContact(gavel(1.7),gavel(.95),{tEnter:0,tExit:1});
+ assert(wrap.tEnter>0&&wrap.tExit===1);
+});
