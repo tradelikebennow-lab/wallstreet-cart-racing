@@ -632,18 +632,32 @@ const sfx = {
 const tkTrack = $('tkTrack'), tkWrap = $('tkWrap');
 let tkX = 0;
 const QT = [['SPX', 5612.4, 1], ['NDX', 19804.1, 1], ['DJI', 41210, 0], ['VIX', 16.4, 2], ['UST10Y', 4.21, 2], ['DXY', 103.8, 2], ['EURUSD', 1.0912, 4], ['USDJPY', 148.22, 2], ['GOLD', 2541.3, 1], ['WTI', 76.42, 2], ['BTC', 64120, 0], ['ETH', 3120, 0], ['SOL', 148.2, 1], ['USDT', 1.0, 4]];
-function tickerPush(html, cls) { const s = document.createElement('span'); s.className = 'tk' + (cls ? ' ' + cls : ''); s.innerHTML = html; tkTrack.appendChild(s); }
+const TICKER_LIMIT = 96;
+function tickerPush(html, cls) {
+  if (tkTrack.childElementCount >= TICKER_LIMIT) {
+    tkTrack.firstElementChild.remove();
+    tkX = 0;
+  }
+  const s = document.createElement('span');
+  s.className = 'tk' + (cls ? ' ' + cls : '');
+  s.innerHTML = html;
+  tkTrack.appendChild(s);
+}
 function quote() {
   const q = pick(QT), ch = (Math.random() - 0.5 + S.mood * (q[0] === 'VIX' ? -1 : 1)) * (q[0] === 'USDT' ? 0.02 : 1.4);
   q[1] *= 1 + ch / 100; const up = ch >= 0;
   return `${q[0]} <span class="${up ? 'u' : 'd'}">${q[1].toLocaleString('en-US', { minimumFractionDigits: q[2], maximumFractionDigits: q[2] })} ${up ? '▲' : '▼'}${Math.abs(ch).toFixed(2)}%</span>`;
 }
 function tickerUpdate(dt) {
-  tkX -= dt * 64;
+  const width = tkWrap.clientWidth;
+  if (width <= 0) return;
   const first = tkTrack.firstElementChild;
-  if (first) { const w = first.offsetWidth; if (-tkX > w) { tkX += w; first.remove(); } }
+  const firstWidth = first ? first.offsetWidth : 0;
+  if (first && firstWidth <= 0) return;
+  tkX -= dt * 64;
+  if (first && -tkX > firstWidth) { tkX += firstWidth; first.remove(); }
   let guard = 0;
-  while (tkTrack.scrollWidth + tkX < tkWrap.clientWidth * 1.5 && guard++ < 8) tickerPush(quote());
+  while (tkTrack.childElementCount < TICKER_LIMIT && tkTrack.scrollWidth + tkX < width * 1.5 && guard++ < 8) tickerPush(quote());
   tkTrack.style.transform = `translateX(${tkX.toFixed(1)}px)`;
 }
 

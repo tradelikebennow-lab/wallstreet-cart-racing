@@ -32,6 +32,36 @@ def upgrade(s):
     s = replace_once(s, 'shield: 0, shieldHits: 0,', 'shieldImpact: 99, shield: 0, shieldHits: 0,')
     s = replace_once(s, "  if (S.shield > 0) {\n    if (!S.shieldAll", "  if (S.shield > 0) {\n    S.shieldImpact=0;\n    if (!S.shieldAll")
     s = replace_once(s, 'function step(dt) {', "function step(dt) {\n  if(S.mode!=='paused')S.shieldImpact=Math.min(99,S.shieldImpact+dt);")
+    s = replace_once(s, "function tickerPush(html, cls) { const s = document.createElement('span'); s.className = 'tk' + (cls ? ' ' + cls : ''); s.innerHTML = html; tkTrack.appendChild(s); }", """const TICKER_LIMIT = 96;
+function tickerPush(html, cls) {
+  if (tkTrack.childElementCount >= TICKER_LIMIT) {
+    tkTrack.firstElementChild.remove();
+    tkX = 0;
+  }
+  const s = document.createElement('span');
+  s.className = 'tk' + (cls ? ' ' + cls : '');
+  s.innerHTML = html;
+  tkTrack.appendChild(s);
+}""")
+    s = replace_once(s, """function tickerUpdate(dt) {
+  tkX -= dt * 64;
+  const first = tkTrack.firstElementChild;
+  if (first) { const w = first.offsetWidth; if (-tkX > w) { tkX += w; first.remove(); } }
+  let guard = 0;
+  while (tkTrack.scrollWidth + tkX < tkWrap.clientWidth * 1.5 && guard++ < 8) tickerPush(quote());
+  tkTrack.style.transform = `translateX(${tkX.toFixed(1)}px)`;
+}""", """function tickerUpdate(dt) {
+  const width = tkWrap.clientWidth;
+  if (width <= 0) return;
+  const first = tkTrack.firstElementChild;
+  const firstWidth = first ? first.offsetWidth : 0;
+  if (first && firstWidth <= 0) return;
+  tkX -= dt * 64;
+  if (first && -tkX > firstWidth) { tkX += firstWidth; first.remove(); }
+  let guard = 0;
+  while (tkTrack.childElementCount < TICKER_LIMIT && tkTrack.scrollWidth + tkX < width * 1.5 && guard++ < 8) tickerPush(quote());
+  tkTrack.style.transform = `translateX(${tkX.toFixed(1)}px)`;
+}""")
     from reliability import integrate
     s = integrate(s, replace_once)
     return s
