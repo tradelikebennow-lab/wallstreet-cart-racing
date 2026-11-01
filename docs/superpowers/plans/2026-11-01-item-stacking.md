@@ -52,7 +52,7 @@ Files: tests/browser-lib.cjs, new tests/item-stacking.cjs, package.json, docs/de
 - [x] Run the feature check after implementation, inspect screenshots and fix findings at their source.
 - [x] Run npm test and all browser scripts including Speedway/Circuit Breaker stalls; check build reproducibility and git diff --check.
 - [x] Obtain independent source review, address material findings with regression checks.
-- [ ] Commit, copy the user-facing game/screenshots, push the current feature branch and update PR #1 without merging.
+- [x] Commit, copy the user-facing game/screenshots, push the current feature branch and update PR #1 without merging.
 
 ## Design synthesis
 
