@@ -26,7 +26,7 @@ Then visit http://localhost:8000.
 - Hold Shift while steering, then release Shift: drift turbo.
 - Up arrow or Space: jump; down arrow: slide.
 - 1, 2, 3: use items; P: pause.
-- Mobile: hold a screen edge to steer. Hold DRIFT with another finger, then release it to boost.
+- Mobile: hold the ◀ ▶ corner buttons to steer, tap the road to jump, swipe down to slide, tap a slot to fire. In 3D, drift by holding ◀ or ▶ with one thumb and the DRIFT button on the other side with the other thumb; release DRIFT to boost.
 - Pause menu: music toggle. SND button: mute music and effects.
 
 See the in-game guide for the complete rules and touch controls.
