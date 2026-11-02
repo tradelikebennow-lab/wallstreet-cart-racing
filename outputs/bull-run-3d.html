@@ -649,6 +649,8 @@ function quote() {
   return `${q[0]} <span class="${up ? 'u' : 'd'}">${q[1].toLocaleString('en-US', { minimumFractionDigits: q[2], maximumFractionDigits: q[2] })} ${up ? '▲' : '▼'}${Math.abs(ch).toFixed(2)}%</span>`;
 }
 function tickerUpdate(dt) {
+  // A hidden strip measures 0 wide, so the fill loop below would keep adding quotes forever and slow every frame.
+  if (!tkWrap.clientWidth) return;
   tkX -= dt * 64;
   const first = tkTrack.firstElementChild;
   if (first) { const w = first.offsetWidth; if (-tkX > w) { tkX += w; first.remove(); } }
