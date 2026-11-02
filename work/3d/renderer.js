@@ -20,15 +20,22 @@ function init3D(){
   const size=profile.shadowSize;
   if(sun.shadow.mapSize.x!==size){sun.shadow.mapSize.set(size,size);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}sun.shadow.needsUpdate=true;}
   qualityHint.hidden=requestedGraphicsQuality!=='auto';
-  qualityHint.textContent=quality==='economy'?'Auto uses Economy for '+(profile.reason==='touch'?'touch controls.':'this compact screen.'):'Auto uses Standard on this screen.';
+  qualityHint.textContent=quality==='medium'?'Auto uses Medium for '+(profile.reason==='touch'?'touch controls.':'this compact screen.')+' Pick Low if it stutters.':'Auto uses High on this screen.';
  }
- const qualityLabel=document.createElement('label');qualityLabel.textContent='Graphics ';
- const qualitySelect=document.createElement('select');qualitySelect.id='graphicsQuality';qualitySelect.setAttribute('aria-label','Graphics quality');
- qualitySelect.innerHTML='<option value="auto">Auto</option><option value="standard">Standard</option><option value="economy">Economy</option>';qualitySelect.value=requestedGraphicsQuality;
- for(const event of ['keydown','keyup'])qualitySelect.addEventListener(event,e=>e.stopPropagation());qualityLabel.append(qualitySelect);
- const qualityHint=document.createElement('small');qualityHint.id='graphicsQualityHint';qualitySelect.setAttribute('aria-describedby',qualityHint.id);
- const audioOptions=document.querySelector('.audio-options');if(audioOptions)audioOptions.append(qualityLabel,qualityHint);
- qualitySelect.addEventListener('change',()=>{requestedGraphicsQuality=GraphicsProfiles.parsePreference(qualitySelect.value);try{localStorage.setItem('bullrun.graphics',requestedGraphicsQuality);}catch{}resize();render3D(0);});
+ // The same choice appears on the title screen and in the pause menu; changing either one updates both.
+ const qualitySelects=[];
+ function qualityPicker(id,labelClass){
+  const label=document.createElement('label');label.className=labelClass;label.textContent='Graphics ';
+  const select=document.createElement('select');select.id=id;select.setAttribute('aria-label','Graphics quality');
+  select.innerHTML='<option value="auto">Auto</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>';select.value=requestedGraphicsQuality;
+  for(const event of ['keydown','keyup'])select.addEventListener(event,e=>e.stopPropagation());
+  select.addEventListener('change',()=>{requestedGraphicsQuality=GraphicsProfiles.parsePreference(select.value);for(const s of qualitySelects)s.value=requestedGraphicsQuality;try{localStorage.setItem('bullrun.graphics',requestedGraphicsQuality);}catch{}resize();render3D(0);});
+  qualitySelects.push(select);label.append(select);return label;
+ }
+ const qualityHint=document.createElement('small');qualityHint.id='graphicsQualityHint';
+ const audioOptions=document.querySelector('.audio-options');if(audioOptions)audioOptions.append(qualityPicker('graphicsQuality',''),qualityHint);
+ $('graphicsQuality').setAttribute('aria-describedby',qualityHint.id);
+ document.querySelector('.difficulty-choice')?.after(qualityPicker('graphicsQualityTitle','difficulty-choice'));
  applyQuality();
  const rim=new T.DirectionalLight('#c4e9ff',1);rim.position.set(20,8,-20);scene.add(rim);
  const materials=new Map(),geos=new Map();

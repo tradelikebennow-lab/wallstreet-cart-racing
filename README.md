@@ -29,7 +29,8 @@ Then visit http://localhost:8000.
 - Matching pickups upgrade a held item to level 3. MAX READY shows its strongest version. Another matching pickup awards cash. Using the item consumes the slot at any level.
 - Mobile: hold the ◀ ▶ corner buttons to steer, tap the road to jump, swipe down to slide, tap a slot to fire. In 3D, drift by holding ◀ or ▶ with one thumb and the DRIFT button on the other side with the other thumb; release DRIFT to boost. Pause and rotation clear held controls.
 - Choose Easy, Medium or Hard on the title screen. Rival pace, reactions and weapon timing change; player handling stays the same. The chosen mode is fixed for that race. Results include Change difficulty to return to setup. Best records are separate, and an existing record imports into Medium once.
-- Pause menu: music toggle and Auto/Standard/Economy graphics. Auto uses Economy for touch or compact screens and Standard for larger desktop screens. Manual choices persist. Economy reduces scenery, crowds and shadows. SND button: mute music and effects.
+- Graphics: choose Auto, High, Medium or Low on the title screen or in the pause menu; the choice is saved on that device. Auto picks Medium for touch or compact screens and High for larger desktop screens. High adds shadows and full scenery. Medium draws phones at up to 2x pixels without shadows and with lighter scenery. Low is Medium at 1x pixels, for older phones.
+- Pause menu: music toggle and graphics. SND button: mute music and effects.
 - The opening course includes a banked corner and an automatic launch ramp with warning signs.
 - Jump input is buffered for 100 ms before landing. Fixed simulation steps and swept collision checks handle fast contacts.
 

@@ -6,7 +6,7 @@ const {openGame}=require('./browser-lib.cjs');
   const {browser,page:p,errors}=await openGame({...device,htmlPath:process.env.BUDGET_HTML||'outputs/bull-run-3d.html'});
   try{
    await p.evaluate(()=>{window.requestAnimationFrame=()=>0;});
-   for(const quality of ['standard','economy']){
+   for(const quality of ['high','medium','low']){
     await p.locator('#graphicsQuality').selectOption(quality,{force:true});
     for(const s of [60,1450,2850]){
      const data=await p.evaluate(s=>{raceQA.clean(s);raceQA.S.rivals.forEach((a,i)=>{a.s=s+12+i*6;a.x=i%3-1;});const t=raceQA.addObs('TRUMP',1,1);t.s=s+25;raceQA.S.slots=[{k:'SHORT',lv:3},{k:'HEDGE',lv:3},{k:'BREAKER',lv:3}];raceQA.S.shield=5;raceQA.render3D(2);raceQA.render3D(0);const i=get3DInfo(),r=raceQA.renderer(),size=r.getDrawingBufferSize(new THREE.Vector2()),gl=r.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');return{...i,backingPixels:size.x*size.y,backing:[size.x,size.y],overlay:[document.querySelector('#view').width,document.querySelector('#view').height],crowdInstances:raceQA.scene().children.find(o=>o.isInstancedMesh&&o.instanceMatrix.count===72)?.count,gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER)};},s);
