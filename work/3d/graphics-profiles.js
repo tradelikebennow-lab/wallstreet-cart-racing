@@ -5,7 +5,8 @@
  'use strict';
  const PROFILES=Object.freeze({
   standard:Object.freeze({maxBackingPixels:2400000,dprCap:1.6,shadowSize:2048,shadowEnabled:true,nearEnter:60,nearExit:75,sceneryStride:1,crowdStride:1}),
-  economy:Object.freeze({maxBackingPixels:750000,dprCap:1,shadowSize:512,shadowEnabled:false,nearEnter:36,nearExit:48,sceneryStride:2,crowdStride:2})
+  // Phones draw at up to 2x for sharp edges; shadows and dense scenery stay off, which is where phone frame time goes.
+  economy:Object.freeze({maxBackingPixels:1400000,dprCap:2,shadowSize:512,shadowEnabled:false,nearEnter:36,nearExit:48,sceneryStride:2,crowdStride:2})
  });
  function parsePreference(value){return value==='standard'||value==='economy'?value:'auto';}
  function positive(value,fallback){return Number.isFinite(value)&&value>0?value:fallback;}
