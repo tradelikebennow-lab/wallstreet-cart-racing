@@ -1936,9 +1936,14 @@ window.addEventListener('keyup', e => {
   if (k === 'arrowleft' || k === 'a') keys.l = false;
   if (k === 'arrowright' || k === 'd') keys.r = false;
 });
-// Touch steering: hold the corner buttons. Holding both cancels out, like the arrow keys.
+// Touch steering: hold the corner buttons. The newest press wins, so a thumb still resting on one side can't cancel a press on the other.
 const steerBtns = { l: 0, r: 0 };
-function setSteer(side, on) { steerBtns[side] = on; $(side === 'l' ? 'bLeft' : 'bRight').classList.toggle('on', !!on); touchSteer = steerBtns.r - steerBtns.l; }
+let steerPress = 0;
+function setSteer(side, on) {
+  steerBtns[side] = on ? ++steerPress : 0;
+  $(side === 'l' ? 'bLeft' : 'bRight').classList.toggle('on', !!on);
+  touchSteer = steerBtns.l || steerBtns.r ? (steerBtns.r > steerBtns.l ? 1 : -1) : 0;
+}
 for (const [id, side] of [['bLeft', 'l'], ['bRight', 'r']]) {
   const b = $(id);
   b.addEventListener('pointerdown', e => { e.preventDefault(); audio(); try { b.setPointerCapture(e.pointerId); } catch (err) {} setSteer(side, 1); });
