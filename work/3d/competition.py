@@ -38,7 +38,7 @@ for(const event of ['keydown','keyup'])$('bChangeDifficulty').addEventListener(e
     patch('<p class="kicker" id="rKicker">Closing bell</p>', '<span id="resultDifficulty" class="difficulty-active">Medium · RACE</span><p class="kicker" id="rKicker">Closing bell</p>')
     patch('mode: S.mode, raceT:', 'mode: S.mode, difficulty:S.difficulty, selectedDifficulty, raceT:')
     patch('</style>', '''
-.difficulty-choice{display:flex;align-items:center;gap:10px;margin-top:14px;font:700 12px var(--mono)}
+.difficulty-choice{display:grid;grid-template-columns:11ch auto;justify-content:start;align-items:center;text-align:left;gap:10px;margin-top:14px;font:700 12px var(--mono)}
 .difficulty-choice select{min-height:44px;min-width:130px;padding:8px 12px;border:1px solid var(--rule);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit}
 .difficulty-active{display:inline-block;font:700 10px var(--mono);letter-spacing:.04em;white-space:nowrap}
 #hDifficulty{display:block;margin-top:3px;font-size:9px;opacity:.8}
