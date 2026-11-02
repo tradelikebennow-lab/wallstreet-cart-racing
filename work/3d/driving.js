@@ -1,9 +1,9 @@
 function holdDrift(on,release=true){
  if(on){if(S.mode!=='play')return;P.driftHeld=true;P.driftReleased=false;}
  else{P.driftHeld=false;P.driftReleased=release&&S.mode==='play';if(!release)cancelDrift();}
- $('bDrift')?.setAttribute('aria-pressed',String(P.driftHeld));
+ for(const b of document.querySelectorAll('.drift-button'))b.setAttribute('aria-pressed',String(P.driftHeld));
 }
-function cancelDrift(){P.drifting=false;P.driftCharge=0;P.driftTier=0;P.driftReleased=false;P.driftHeld=false;const meter=$('driftMeter');if(meter)meter.hidden=true;$('bDrift')?.setAttribute('aria-pressed','false');}
+function cancelDrift(){P.drifting=false;P.driftCharge=0;P.driftTier=0;P.driftReleased=false;P.driftHeld=false;const meter=$('driftMeter');if(meter)meter.hidden=true;for(const b of document.querySelectorAll('.drift-button'))b.setAttribute('aria-pressed','false');}
 function updateDriving(dt){
  const steer=clamp((keys.r?1:0)-(keys.l?1:0)+touchSteer,-1,1);
  const safe=S.mode==='play'&&Math.abs(P.x)<1.50&&P.y<.06&&P.v>12&&P.spin<=0&&P.freeze<=0&&P.reverse<=0;
@@ -26,7 +26,8 @@ function initDrivingControls(){
  window.addEventListener('keydown',e=>{if(e.key==='Shift'){e.preventDefault();if(!e.repeat)holdDrift(true);}});
  window.addEventListener('keyup',e=>{if(e.key==='Shift'){e.preventDefault();holdDrift(false);}});
  window.addEventListener('blur',()=>holdDrift(false,false));
- const b=$('bDrift');b.addEventListener('pointerdown',e=>{e.preventDefault();audio();holdDrift(true);b.setPointerCapture(e.pointerId);});
+ // Touch screens get a DRIFT button on each side, so each thumb stays on its own side: one steers, the other drifts.
+ for(const b of document.querySelectorAll('.drift-button')){b.addEventListener('pointerdown',e=>{e.preventDefault();audio();holdDrift(true);b.setPointerCapture(e.pointerId);});
  const release=e=>{e.preventDefault();holdDrift(false,e.type!=='pointercancel');};b.addEventListener('pointerup',release);b.addEventListener('pointercancel',release);b.addEventListener('lostpointercapture',()=>{if(P.driftHeld)holdDrift(false,false);});
- b.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();if(!e.repeat)holdDrift(true);}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();holdDrift(false);}});
+ b.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();if(!e.repeat)holdDrift(true);}});b.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();holdDrift(false);}});}
 }
