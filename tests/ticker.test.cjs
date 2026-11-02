@@ -14,7 +14,7 @@ function ticker(){
     appendChild(item){items.push(item);},
   };
   const document={createElement(){return {offsetWidth:200,remove(){items.splice(items.indexOf(this),1);}};}};
-  const source=fs.readFileSync('outputs/bull-run-3d.html','utf8');
+  const source=fs.readFileSync('outputs/index.html','utf8');
   const start=source.indexOf("const tkTrack = $('tkTrack')");
   const end=source.indexOf('// ---------- icons',start);
   const context=vm.createContext({document,$:id=>id==='tkTrack'?track:wrap,S:{mood:0},pick:values=>values[0]});

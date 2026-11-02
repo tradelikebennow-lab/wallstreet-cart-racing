@@ -3,7 +3,7 @@ const {openGame}=require('./browser-lib.cjs');
 (async()=>{
  const report={tag:process.env.BUDGET_TAG||'head',scenarios:[],errors:[],note:'Render-work counters on headless software WebGL. These do not measure physical phone FPS or battery use.'};
  for(const device of [{name:'desktop',viewport:{width:1440,height:900},deviceScaleFactor:2},{name:'phone',viewport:{width:390,height:844},deviceScaleFactor:3,hasTouch:true,isMobile:true}]){
-  const {browser,page:p,errors}=await openGame({...device,htmlPath:process.env.BUDGET_HTML||'outputs/bull-run-3d.html'});
+  const {browser,page:p,errors}=await openGame({...device,htmlPath:process.env.BUDGET_HTML||'outputs/index.html'});
   try{
    await p.evaluate(()=>{window.requestAnimationFrame=()=>0;});
    for(const quality of ['high','medium','low']){

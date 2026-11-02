@@ -5,7 +5,7 @@ function init3D(){
  const surface=document.createElement('canvas');surface.id='world3d';surface.setAttribute('aria-hidden','true');game.prepend(surface);
  let renderer;
  try{renderer=new T.WebGLRenderer({canvas:surface,antialias:true,alpha:false,powerPreference:'high-performance'});}catch(err){
-   const msg=document.createElement('div');msg.className='webgl-error';msg.innerHTML='<h2>3D graphics are unavailable</h2><p>This edition needs WebGL. Try a browser with hardware acceleration enabled.</p><a href="bull-run-grand-prix.html">Open the 2D edition</a>';game.append(msg);$('bStart').disabled=true;return;
+   const msg=document.createElement('div');msg.className='webgl-error';msg.innerHTML='<h2>3D graphics are unavailable</h2><p>This edition needs WebGL. Try a browser with hardware acceleration enabled.</p>';game.append(msg);$('bStart').disabled=true;return;
  }
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
  let profile=resolveGraphicsProfile(W||game.clientWidth,H||game.clientHeight),quality=profile.quality;

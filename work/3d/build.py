@@ -1,7 +1,8 @@
 from pathlib import Path
 import re
 from patching import read, sub
-s=read('outputs/bull-run-grand-prix.html')
+# The 2D game is the source the 3D edition is built from; only the built 3D game is published.
+s=read('work/3d/bull-run-grand-prix.html')
 # The 2D short-landscape layout squeezes the 3D edition's larger item rack, so it stays out of the 3D build.
 s,n=re.subn(r'/\* Short landscape phones:[^\n]*\n@media\(orientation:landscape\) and \(max-height:500px\)\{[^\n]*\}\n','',s)
 if n!=1:raise SystemExit(f'Build anchor matched {n} times, expected 1: 2D short-landscape rule')
@@ -17,7 +18,7 @@ s=sub(s,"'bull-run-grand-prix-best'","'bull-run-3d-best'",found=2)
 s=sub(s,'01 / The Grand Prix edition','THE OPENING BELL CUP / 3D EDITION')
 s=sub(s,'Bull Run<span>Grand Prix</span>','Bull Run<span>Grand Prix</span><em class="badge3d">3D</em>')
 s=sub(s,'Big trades. Tiny karts. Race five rival traders through a wild market adventure — from opening bell to the finish line.','A big little racing world. Take the wheel, chase the market, and race five rival traders all the way to the closing bell.')
-s=sub(s,'href="midnight-exchange.html">Try Midnight','href="index.html">Other editions')
+s=sub(s,'<a class="switch-edition" href="midnight-exchange.html">Try Midnight ↗</a>','')
 a=s.index('<svg class="hero-art"');b=s.index('</svg>',a)+6;s=s[:a]+s[b:]
 s=sub(s,'</style>','''
 #world3d{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
@@ -46,6 +47,6 @@ s=integrate_devices(s,sub)
 from controls import integrate as integrate_controls
 s=integrate_controls(s,sub)
 s=sub(s,'<script>', '<!-- Three.js license\n'+read('work/3d/THREE-LICENSE.txt')+'\n-->\n<script>',found=2,count=1)
-Path('outputs/bull-run-3d.html').write_text(s,encoding='utf-8')
+Path('outputs/index.html').write_text(s,encoding='utf-8')
 Path('outputs/THREE-LICENSE.txt').write_text(read('work/3d/THREE-LICENSE.txt'),encoding='utf-8')
 print('Built standalone 3D edition:',len(s),'bytes')
