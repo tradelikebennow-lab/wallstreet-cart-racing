@@ -213,7 +213,9 @@ kbd{display:inline-block;min-width:18px;padding:0 4px;border:1px solid rgba(255,
 #title .sheet{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr)}
 @media(min-width:801px){#title .logo{font-size:clamp(64px,6.3vw,92px)}}
 @media(max-width:800px){#title .sheet{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:720px){.breaking{top:265px}.hud-c .lbl{font-size:9px}.clock{font-size:9px}}
+@media(max-width:720px){.hud-c .lbl{font-size:9px}.clock{font-size:9px}}
+/* The news card appears as its obstacle spawns up the road, so on phones it covers the HUD for a moment instead of the road. */
+@media(max-width:720px),(max-height:500px){.breaking{top:36px;width:calc(100% - 24px)}.breaking .hist{display:none}}
 
 #world3d{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
 #view{z-index:1;background:transparent}#game[data-mode="title"] #view{visibility:visible}
@@ -586,7 +588,8 @@ function audio() {
       const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     } catch (e) { AC = null; }
   }
-  if (AC && AC.state === 'suspended') AC.resume();
+  // iOS reports 'interrupted' after a call or Siri, not 'suspended'; resume from either.
+  if (AC && AC.state !== 'running') AC.resume().catch(() => {});
 }
 function tone(f, dur, type = 'square', vol = 0.06, slide = 0, delay = 0) {
   if (!AC || muted) return;
@@ -1103,7 +1106,7 @@ function isActive(e) {
 function step(dt) {
   updateRaceUX(dt);
   tickerUpdate(dt);
-  for (const q of S.parts) { q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += q.g * dt; q.vx *= 0.985; q.rot += q.vr * dt; }
+  for (const q of S.parts) { q.life -= dt; q.x += q.vx * dt; q.y += q.vy * dt; q.vy += q.g * dt; q.vx *= Math.pow(0.985, dt * 60); q.rot += q.vr * dt; }
   S.parts = S.parts.filter(q => q.life > 0);
   for (const f of S.texts) { f.life -= dt; f.y -= 46 * dt; }
   S.texts = S.texts.filter(f => f.life > 0);
@@ -1966,7 +1969,7 @@ function showResults() {
   setMode('results'); updateBest();
   setTimeout(() => $('bAgain').focus({ preventScroll: true }), 50);
 }
-function togglePause() { if (S.mode === 'play') setMode('paused'); else if (S.mode === 'paused') setMode('play'); }
+function togglePause() { if (S.mode === 'play') setMode('paused'); else if (S.mode === 'paused') { audio(); setMode('play'); } }
 function updateBest() { $('tBest').textContent = best.place ? `Best finish ${ord(best.place)} · Best P&L ${fmt(best.pnl)}` : 'No races on the books yet'; }
 
 // ---------- input ----------
@@ -1989,24 +1992,29 @@ window.addEventListener('keyup', e => {
   if (k === 'arrowleft' || k === 'a') keys.l = false;
   if (k === 'arrowright' || k === 'd') keys.r = false;
 });
-window.addEventListener('blur', () => { keys.l = keys.r = false; touchSteer = 0; });
-let ptr = null;
+// Every finger is tracked so a second finger (a tap to jump) no longer cancels the one holding a steer zone.
+// Steering follows the newest finger still holding a side zone.
+const ptrs = new Map();
+function steerFromPtrs() { let z = 0; for (const p of ptrs.values()) if (!p.used && p.zone) z = p.zone; touchSteer = z; }
+window.addEventListener('blur', () => { keys.l = keys.r = false; ptrs.clear(); touchSteer = 0; });
 cvs.addEventListener('pointerdown', e => {
   audio();
   const r = cvs.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width;
-  ptr = { id: e.pointerId, x: e.clientX, y: e.clientY, zone: fx < 0.34 ? -1 : fx > 0.66 ? 1 : 0, used: false };
-  touchSteer = ptr.zone;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY, zone: fx < 0.34 ? -1 : fx > 0.66 ? 1 : 0, used: false });
+  steerFromPtrs();
   try { cvs.setPointerCapture(e.pointerId); } catch (err) {}
 });
 cvs.addEventListener('pointermove', e => {
-  if (!ptr || e.pointerId !== ptr.id || ptr.used) return;
-  const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
-  if (Math.abs(dy) > 30 && Math.abs(dy) > Math.abs(dx)) { ptr.used = true; touchSteer = 0; dy < 0 ? jump() : slide(); }
+  const p = ptrs.get(e.pointerId);
+  if (!p || p.used) return;
+  const dx = e.clientX - p.x, dy = e.clientY - p.y;
+  if (Math.abs(dy) > 30 && Math.abs(dy) > Math.abs(dx)) { p.used = true; steerFromPtrs(); dy < 0 ? jump() : slide(); }
 });
 const endPtr = e => {
-  if (!ptr || e.pointerId !== ptr.id) return;
-  if (!ptr.used && ptr.zone === 0 && Math.hypot(e.clientX - ptr.x, e.clientY - ptr.y) < 14) jump();
-  ptr = null; touchSteer = 0;
+  const p = ptrs.get(e.pointerId);
+  if (!p) return;
+  if (!p.used && p.zone === 0 && Math.hypot(e.clientX - p.x, e.clientY - p.y) < 14) jump();
+  ptrs.delete(e.pointerId); steerFromPtrs();
 };
 cvs.addEventListener('pointerup', endPtr); cvs.addEventListener('pointercancel', endPtr);
 $('bStart').addEventListener('click', start);
@@ -2015,7 +2023,11 @@ $('bResume').addEventListener('click', togglePause);
 $('bPause').addEventListener('click', e => { e.currentTarget.blur(); togglePause(); });
 function toggleMute() { muted = !muted; $('bMute').setAttribute('aria-pressed', String(muted)); $('bMute').textContent = muted ? 'MUTE' : 'SND'; }
 $('bMute').addEventListener('click', e => { e.currentTarget.blur(); audio(); toggleMute(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden && S.mode === 'play') setMode('paused'); });
+// The frame loop stops while hidden, so voices it would have faded keep sounding; suspending the context silences them all.
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { if (S.mode === 'play') setMode('paused'); AC?.suspend(); }
+  else if (AC) AC.resume().catch(() => {});
+});
 window.addEventListener('resize', resize);
 
 function holdDrift(on,release=true){
@@ -2122,6 +2134,8 @@ function init3D(){
  function cylinder(p,m,x,y,z,r,h){return mesh(p,cylgeo,m,x,y,z,r,h,r);}
  function roundedGeo(w,h,d,r){const k=[w,h,d,r].join(',');if(geos.has(k))return geos.get(k);const shape=new T.Shape();shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);const geo=new T.ExtrudeGeometry(shape,{depth:Math.max(.01,d-r*2),bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:r*.5,bevelThickness:r,curveSegments:6});geo.center();geos.set(k,geo);return geo;}
  function round(p,m,x,y,z,w,h,d,r=.12){return mesh(p,roundedGeo(w,h,d,r),m,x,y,z);}
+ // Coins arrive five to a row, so they share one small face instead of each uploading its own 1024px sign texture. Registered in the caches so disposeEntity keeps it.
+ const coinFace={geo:new T.PlaneGeometry(.43,.43),mat:new T.MeshBasicMaterial({map:textTexture('$','#fff4ac','#edb02a',256,256),side:T.DoubleSide})};geos.set('coin-face',coinFace.geo);materials.set('coin-face',coinFace.mat);
  function textTexture(txt,fg='#ffffff',bg='#1c566d',w=512,h=128){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle=bg;g.fillRect(0,0,w,h);g.strokeStyle='#ffffff55';g.lineWidth=8;g.strokeRect(5,5,w-10,h-10);g.fillStyle=fg;g.font='900 '+Math.min(h*.58,w/(txt.length*.65))+'px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,w/2,h*.53);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;}
  function sign(p,txt,x,y,z,w=3,h=.65,bg='#194e65',fg='#fff7de'){const t=textTexture(txt,fg,bg,1024,Math.max(64,Math.round(1024*h/w)));const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t,side:T.DoubleSide,transparent:bg.endsWith("00")}));m.position.set(x,y,z);p.add(m);return m;}
  function noiseTexture(base,scatter){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');g.fillStyle=base;g.fillRect(0,0,128,128);for(let i=0;i<6000;i++){g.fillStyle=i%2?'#ffffff'+scatter:'#000000'+scatter;g.fillRect(hash(i+2)*128,hash(i+999)*128,1,1);}const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.colorSpace=T.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t;}
@@ -2224,7 +2238,7 @@ function init3D(){
  const entityModels=new Map();
  function obstacle(e){const g=new T.Group(),span=(e.span||1)*2.8,type=e.type;const color=WPN[e.kind]?.col||'#ffb950';
   if(e.cat==='coin'){
-   const coin=cylinder(g,gold,0,.75,0,.34,.09);coin.rotation.x=Math.PI/2;const face=sign(g,'$',0,.75,.055,.43,.43,'#edb02a','#fff4ac');g.userData.spin=true;
+   const coin=cylinder(g,gold,0,.75,0,.34,.09);coin.rotation.x=Math.PI/2;const face=new T.Mesh(coinFace.geo,coinFace.mat);face.position.set(0,.75,.055);g.add(face);g.userData.spin=true;
   }else if(e.cat==='item'){
    const model=pickupModel(e);scene.add(model);return model;
   }else if(type==='DEPEG'||type==='FROZEN'){
@@ -2367,7 +2381,8 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 function tick(dt) {
-  step(dt);
+  // Sub-steps of 1/120s or less: one step per frame at 30fps moves a boosted kart further than an obstacle's hit window, so it passed straight through.
+  for (let n = Math.ceil(dt * 120), i = 0; i < n; i++) step(dt / n);
   wallT += dt; if (wallT > 0.6) { wallT = 0; wallTick(); }
   render3D();
   if (S.mode !== 'title') { hud(); eqT += dt; if (eqT > 0.15) { eqT = 0; drawEq(); } }

@@ -1,6 +1,10 @@
 from pathlib import Path
+import re
 from patching import read, sub
 s=read('outputs/bull-run-grand-prix.html')
+# The 2D short-landscape layout squeezes the 3D edition's larger item rack, so it stays out of the 3D build.
+s,n=re.subn(r'/\* Short landscape phones:[^\n]*\n@media\(orientation:landscape\) and \(max-height:500px\)\{[^\n]*\}\n','',s)
+if n!=1:raise SystemExit(f'Build anchor matched {n} times, expected 1: 2D short-landscape rule')
 s=sub(s,'<title>Bull Run Grand Prix · Trading Racer</title>','<title>Bull Run 3D · Opening Bell Cup</title>')
 s=sub(s,'<script>','<script>\n'+read('work/3d/three.min.js')+'\n</script>\n<script>',count=1)
 s=sub(s,"function render() {", "function renderLegacy() {")

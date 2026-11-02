@@ -23,6 +23,8 @@ function init3D(){
  function cylinder(p,m,x,y,z,r,h){return mesh(p,cylgeo,m,x,y,z,r,h,r);}
  function roundedGeo(w,h,d,r){const k=[w,h,d,r].join(',');if(geos.has(k))return geos.get(k);const shape=new T.Shape();shape.moveTo(-w/2+r,-h/2);shape.lineTo(w/2-r,-h/2);shape.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);shape.lineTo(w/2,h/2-r);shape.quadraticCurveTo(w/2,h/2,w/2-r,h/2);shape.lineTo(-w/2+r,h/2);shape.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);shape.lineTo(-w/2,-h/2+r);shape.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);const geo=new T.ExtrudeGeometry(shape,{depth:Math.max(.01,d-r*2),bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:r*.5,bevelThickness:r,curveSegments:6});geo.center();geos.set(k,geo);return geo;}
  function round(p,m,x,y,z,w,h,d,r=.12){return mesh(p,roundedGeo(w,h,d,r),m,x,y,z);}
+ // Coins arrive five to a row, so they share one small face instead of each uploading its own 1024px sign texture. Registered in the caches so disposeEntity keeps it.
+ const coinFace={geo:new T.PlaneGeometry(.43,.43),mat:new T.MeshBasicMaterial({map:textTexture('$','#fff4ac','#edb02a',256,256),side:T.DoubleSide})};geos.set('coin-face',coinFace.geo);materials.set('coin-face',coinFace.mat);
  function textTexture(txt,fg='#ffffff',bg='#1c566d',w=512,h=128){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle=bg;g.fillRect(0,0,w,h);g.strokeStyle='#ffffff55';g.lineWidth=8;g.strokeRect(5,5,w-10,h-10);g.fillStyle=fg;g.font='900 '+Math.min(h*.58,w/(txt.length*.65))+'px Arial';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,w/2,h*.53);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;}
  function sign(p,txt,x,y,z,w=3,h=.65,bg='#194e65',fg='#fff7de'){const t=textTexture(txt,fg,bg,1024,Math.max(64,Math.round(1024*h/w)));const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t,side:T.DoubleSide,transparent:bg.endsWith("00")}));m.position.set(x,y,z);p.add(m);return m;}
  function noiseTexture(base,scatter){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');g.fillStyle=base;g.fillRect(0,0,128,128);for(let i=0;i<6000;i++){g.fillStyle=i%2?'#ffffff'+scatter:'#000000'+scatter;g.fillRect(hash(i+2)*128,hash(i+999)*128,1,1);}const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.colorSpace=T.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();return t;}
@@ -125,7 +127,7 @@ function init3D(){
  const entityModels=new Map();
  function obstacle(e){const g=new T.Group(),span=(e.span||1)*2.8,type=e.type;const color=WPN[e.kind]?.col||'#ffb950';
   if(e.cat==='coin'){
-   const coin=cylinder(g,gold,0,.75,0,.34,.09);coin.rotation.x=Math.PI/2;const face=sign(g,'$',0,.75,.055,.43,.43,'#edb02a','#fff4ac');g.userData.spin=true;
+   const coin=cylinder(g,gold,0,.75,0,.34,.09);coin.rotation.x=Math.PI/2;const face=new T.Mesh(coinFace.geo,coinFace.mat);face.position.set(0,.75,.055);g.add(face);g.userData.spin=true;
   }else if(e.cat==='item'){
    const model=pickupModel(e);scene.add(model);return model;
   }else if(type==='DEPEG'||type==='FROZEN'){
