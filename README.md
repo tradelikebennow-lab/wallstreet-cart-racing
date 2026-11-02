@@ -47,7 +47,7 @@ The sector music lives in `work/3d/music/` as 96 kbps MP3s (`circuit.mp3`, `spee
 
 Three.js is distributed under the MIT license; see `outputs/THREE-LICENSE.txt`. This repository does not assign a license to the original game code.
 
-Music by MintoDog, released under CC0 on OpenGameArt and re-encoded at a lower bitrate:
+Music by MintoDog, released under CC0 on OpenGameArt and re-encoded at a lower bitrate and matched in loudness:
 
 - Circuit: [Sunny City](https://opengameart.org/content/sunny-city)
 - Crypto Speedway: [Blossom Mountain (Remake)](https://opengameart.org/content/blossom-mountainremake)

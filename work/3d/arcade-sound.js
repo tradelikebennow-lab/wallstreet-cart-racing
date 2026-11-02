@@ -7,9 +7,10 @@ function initArcadeAudio(){
  $('bResume').addEventListener('click',syncMusic);$('bMute').addEventListener('click',syncMusic);
  document.addEventListener('visibilitychange',syncMusic);
 }
+// Tracks are loudness-matched to -16 LUFS; .1 puts them about 6 dB under the shoot sound, where the old synth tune sat, so effects stay audible.
 function syncMusic(){
  if(!AC)return;
- if(!musicEl){musicEl=new Audio();musicEl.loop=true;const gain=AC.createGain();gain.gain.value=.32;AC.createMediaElementSource(musicEl).connect(gain);gain.connect(master);}
+ if(!musicEl){musicEl=new Audio();musicEl.loop=true;const gain=AC.createGain();gain.gain.value=.1;AC.createMediaElementSource(musicEl).connect(gain);gain.connect(master);}
  const want=musicEnabled&&!muted&&!document.hidden&&(S.mode==='count'||S.mode==='play');
  if(!want){if(!musicEl.paused)musicEl.pause();return;}
  const sec=sectorOf(P.s);
