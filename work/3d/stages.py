@@ -1,4 +1,10 @@
 from pathlib import Path
+import base64
+
+# Inlined as data URIs so the game still works when opened straight from disk, where browsers block loading separate files.
+def sector_music():
+ uris=["'data:audio/mpeg;base64,"+base64.b64encode(Path(f'work/3d/music/{t}.mp3').read_bytes()).decode()+"'" for t in ['circuit','speedway','castle']]
+ return 'const SECTOR_MUSIC=['+','.join(uris)+'];\n'
 
 def stages(s):
  s=s.replace('    radioLog: [], feedbackT: 0,','    podiumSeen: false, drifts: 0, radioLog: [], feedbackT: 0,')
@@ -18,7 +24,7 @@ def stages(s):
  s=s.replace('player: { s: +P.s.toFixed(1),','drift: {active:!!P.drifting,tier:P.driftTier,charge:+P.driftCharge.toFixed(2)}, player: { s: +P.s.toFixed(1),')
  s=s.replace(' initDrivingControls();',' initDrivingControls(); initArcadeAudio();')
  s=s.replace('function updateRaceUX(dt){','function updateRaceUX(dt){\n updateArcadeAudio();')
- s=s.replace('let engineVoice=null;',Path('work/3d/arcade-sound.js').read_text()+'\nlet engineVoice=null;')
- s=s.replace('<section class="radio-history">','<div class="audio-options"><label><input type="checkbox" id="musicEnabled" checked> Arcade music</label><small>The SND button mutes music and effects.</small></div><section class="radio-history">')
+ s=s.replace('let engineVoice=null;',sector_music()+Path('work/3d/arcade-sound.js').read_text()+'\nlet engineVoice=null;')
+ s=s.replace('<section class="radio-history">','<div class="audio-options"><label><input type="checkbox" id="musicEnabled" checked> Music</label><small>The SND button mutes music and effects.</small></div><section class="radio-history">')
  s=s.replace('</style>',' .audio-options{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px;font-size:13px}.audio-options label{display:flex;align-items:center;gap:8px;cursor:pointer}.audio-options input{width:18px;height:18px;accent-color:#ec654a}.audio-options small{color:#557182;font-size:11px}\n</style>')
  return s
