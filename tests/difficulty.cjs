@@ -6,7 +6,7 @@ const {openGame}=require('./browser-lib.cjs');
  const report={pace:[],contacts:{},storage:{},lifecycle:{},protectedProgression:[],note:'Protected player progression checks lifecycle and all sectors. It does not measure race balance.'};
  const url='http://difficulty.test/';
  const hooks='window.difficultyQA={P,S,reset,step,updateAI,finish,showResults,setMode,Competition};\n';
- const html=fs.readFileSync('outputs/bull-run-3d.html','utf8').replace('// deterministic hooks',hooks+'// deterministic hooks').replace('function step(dt) {','function step(dt) {if(window.QA_PROTECTED&&S.mode==="play"){P.x*=.5;if(P.vx)P.vx*=.5;S.inv0=999;P.diamond=999;}');
+ const html=fs.readFileSync('outputs/index.html','utf8').replace('// deterministic hooks',hooks+'// deterministic hooks').replace('function step(dt) {','function step(dt) {if(window.QA_PROTECTED&&S.mode==="play"){P.x*=.5;if(P.vx)P.vx*=.5;S.inv0=999;P.diamond=999;}');
  try{
   assert.equal(await p.locator('#bChangeDifficulty').count(),1,'results offers a path to change difficulty');
   await p.addInitScript(()=>{window.requestAnimationFrame=()=>0;});

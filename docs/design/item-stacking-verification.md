@@ -30,4 +30,4 @@ The existing suites cover collision rules, replay, a protected three-sector race
 
 Headless tests use software WebGL. Resource bounds and behavior are checked; no device FPS or universal smoothness claim is made. Effects are short and localized, and at most 24 instances exist. Broader environment and speedometer redesigns remain separate follow-ups.
 
-[Desktop preview](../../outputs/bull-run-3d-preview.png) · [Phone preview](../../outputs/kart-mobile-preview.png) · [Upgrade effect](../../outputs/kart-item-upgrade-preview.png)
+[Desktop preview](../images/bull-run-3d-preview.png) · [Phone preview](../images/kart-mobile-preview.png) · [Upgrade effect](../images/kart-item-upgrade-preview.png)

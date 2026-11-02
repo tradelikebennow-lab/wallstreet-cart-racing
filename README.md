@@ -1,10 +1,12 @@
 # Wallstreet Cart Racing
 
-A browser trading kart racer with three playable editions.
+A 3D browser trading kart racer: Bull Run Grand Prix 3D.
 
 ## Play locally
 
-Open `outputs/index.html` to choose an edition, or open `outputs/bull-run-3d.html` directly for the latest 3D game. The 3D edition requires a WebGL-capable browser and includes Three.js inline. It uses local font fallbacks and boots without network requests.
+Open `outputs/index.html`. The game requires a WebGL-capable browser and includes Three.js inline. It uses local font fallbacks and boots without network requests.
+
+To publish it, upload the `outputs` folder as it is (for example to Netlify Drop). It holds only the game and the Three.js license.
 
 Alternatively, from the repository root:
 
@@ -14,11 +16,9 @@ python3 -m http.server 8000
 
 Then visit http://localhost:8000.
 
-## Editions
+## Features
 
-- **Bull Run 3D:** the latest version, with momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, charged item stacking, effects, arcade audio, a music track for each sector, and Easy/Medium/Hard opponents.
-- **Bull Run Grand Prix:** the earlier colorful 2D racing edition.
-- **Midnight Exchange:** the alternative visual edition.
+Momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, charged item stacking, effects, arcade audio, a music track for each sector, and Easy/Medium/Hard opponents.
 
 ## Controls
 
@@ -27,7 +27,7 @@ Then visit http://localhost:8000.
 - Up arrow or Space: jump; down arrow: slide.
 - 1, 2, 3: use items; P: pause.
 - Matching pickups upgrade a held item to level 3. MAX READY shows its strongest version. Another matching pickup awards cash. Using the item consumes the slot at any level.
-- Mobile: hold the ◀ ▶ corner buttons to steer, tap the road to jump, swipe down to slide, tap a slot to fire. In 3D, drift by holding ◀ or ▶ with one thumb and the DRIFT button on the other side with the other thumb; release DRIFT to boost. Pause and rotation clear held controls.
+- Mobile: hold the ◀ ▶ corner buttons to steer, tap the road to jump, swipe down to slide, tap a slot to fire. Drift by holding ◀ or ▶ with one thumb and the DRIFT button on the other side with the other thumb; release DRIFT to boost. Pause and rotation clear held controls.
 - Choose Easy, Medium or Hard on the title screen. Rival pace, reactions and weapon timing change; player handling stays the same. The chosen mode is fixed for that race. Results include Change difficulty to return to setup. Best records are separate, and an existing record imports into Medium once.
 - Graphics: choose Auto, High, Medium or Low on the title screen or in the pause menu; the choice is saved on that device. Auto picks Medium for touch or compact screens and High for larger desktop screens. High adds shadows and full scenery. Medium draws phones at up to 2x pixels without shadows and with lighter scenery. Low is Medium at 1x pixels, for older phones.
 - Pause menu: music toggle and graphics. SND button: mute music and effects.
@@ -36,7 +36,7 @@ Then visit http://localhost:8000.
 
 See the in-game guide for the complete rules and touch controls.
 
-## Rebuild the 3D edition
+## Rebuild the game
 
 Python 3 is required. Run from the repository root:
 
@@ -44,7 +44,7 @@ Python 3 is required. Run from the repository root:
 python3 work/3d/build.py
 ```
 
-The builder combines `outputs/bull-run-grand-prix.html` with the renderer and enhancements in `work/3d/`, and writes `outputs/bull-run-3d.html`. Every patch states how many times its anchor must appear in the source; if an edit to the 2D file moves one, the build stops and names the anchor instead of writing a game with a feature missing. The earlier 2D HTML files are standalone source editions.
+The builder combines the 2D source game `work/3d/bull-run-grand-prix.html` with the renderer and enhancements in `work/3d/`, and writes `outputs/index.html`. Every patch states how many times its anchor must appear in the source; if an edit to the 2D file moves one, the build stops and names the anchor instead of writing a game with a feature missing. The 2D source is not published.
 
 ## Verify changes
 
@@ -73,7 +73,7 @@ Run `npm run profile:devices` for matched scene work counters. `BUDGET_HTML` can
 
 ## Music files
 
-The sector music lives in `work/3d/music/` as 96 kbps MP3s (`circuit.mp3`, `speedway.mp3`, `castle.mp3`). The build embeds them in the HTML, so the 3D edition still plays music when opened straight from disk.
+The sector music lives in `work/3d/music/` as 96 kbps MP3s (`circuit.mp3`, `speedway.mp3`, `castle.mp3`). The build embeds them in the HTML, so the game still plays music when opened straight from disk.
 
 ## Third-party code and music
 

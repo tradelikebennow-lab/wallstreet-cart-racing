@@ -16,7 +16,7 @@ const fixtures=[
 const hooks=`window.layoutQA={P,S,setMode,finish,render3D,scene(){return G3.scene;},
  staticRace(){reset();setMode('play');P.s=185;P.x=0;P.v=27;P.y=P.vy=0;S.ents=[];S.shots=[];S.aiShots=[];S.rugs=[];S.swanMarks=[];S.rivals.forEach((a,i)=>{a.s=197+i*5;a.x=i%2?1:-1;});S.slots=[{k:'SHORT',lv:3},{k:'HEDGE',lv:2},{k:'BREAKER',lv:1}];S.shield=5;showBreaking('CPI surprise','Jump the low barrier.','Full news context');render3D(2);render3D(0);hud();drawEq();}
 };\n`;
-const source=fs.readFileSync(path.resolve(process.env.LAYOUT_HTML||'outputs/bull-run-3d.html'),'utf8');
+const source=fs.readFileSync(path.resolve(process.env.LAYOUT_HTML||'outputs/index.html'),'utf8');
 assert(source.includes('// deterministic hooks'),'emitted artifact exposes deterministic test insertion');
 function fixtureHTML(fixture){
  const simulated=fixture.safe?source.replace(/env\(safe-area-inset-(top|right|bottom|left)(?:\s*,[^)]*)?\)/g,(_,edge)=>fixture.safe[edge]+'px'):source;

@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict');
 const {openGame}=require('./browser-lib.cjs');
 (async()=>{
- const {browser,page:p,errors}=await openGame({viewport:{width:390,height:844},deviceScaleFactor:3,hasTouch:true,isMobile:true,htmlPath:process.env.CONTROL_HTML||'outputs/bull-run-3d.html'});
+ const {browser,page:p,errors}=await openGame({viewport:{width:390,height:844},deviceScaleFactor:3,hasTouch:true,isMobile:true,htmlPath:process.env.CONTROL_HTML||'outputs/index.html'});
  try{
   const cdp=await p.context().newCDPSession(p);
   const touch=(type,touchPoints)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints});

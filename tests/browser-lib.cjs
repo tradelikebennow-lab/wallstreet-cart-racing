@@ -7,7 +7,7 @@ function playwright(){
  }
 }
 async function openGame(options={}){
- const {captureWebGL=false,htmlPath="outputs/bull-run-3d.html",...pageOptions}=options;
+ const {captureWebGL=false,htmlPath="outputs/index.html",...pageOptions}=options;
  const browser=await playwright().chromium.launch({args:['--enable-webgl','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const page=await browser.newPage({viewport:{width:1440,height:900},...pageOptions});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
