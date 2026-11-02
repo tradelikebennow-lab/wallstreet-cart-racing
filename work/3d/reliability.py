@@ -13,9 +13,9 @@ function requestJump(){if(S.mode==='play'){P.jumpUntil=simulationTime+.1;consume
 function jump(){requestJump();}''')
     patch('function reset() {', 'var simulationTime=0,simulationStepper;\nfunction reset() {\n  cancelJump(); simulationTime=0; if(simulationStepper)simulationStepper.reset();')
     patch("  S.mode = m; game.dataset.mode = m; if(m!=='play')cancelDrift();", "  S.mode = m; game.dataset.mode = m; cancelJump(); simulationStepper.reset(); if(m!=='play')cancelDrift();")
-    patch("window.addEventListener('blur', () => { keys.l = keys.r = false; touchSteer = 0; });", "window.addEventListener('blur', () => { keys.l = keys.r = false; touchSteer = 0; cancelJump(); simulationStepper.reset(); });")
-    patch("document.addEventListener('visibilitychange', () => { if (document.hidden && S.mode === 'play') setMode('paused'); });", "document.addEventListener('visibilitychange', () => { cancelJump(); simulationStepper.reset(); if (document.hidden && S.mode === 'play') setMode('paused'); });")
-    patch("  if (!ptr.used && ptr.zone === 0 && Math.hypot", "  if(e.type==='pointercancel')cancelJump();\n  if (e.type!=='pointercancel' && !ptr.used && ptr.zone === 0 && Math.hypot")
+    patch("window.addEventListener('blur', () => { keys.l = keys.r = false; ptrs.clear(); setSteer('l', 0); setSteer('r', 0); });", "window.addEventListener('blur', () => { keys.l = keys.r = false; ptrs.clear(); setSteer('l', 0); setSteer('r', 0); cancelJump(); simulationStepper.reset(); });")
+    patch("document.addEventListener('visibilitychange', () => {\n", "document.addEventListener('visibilitychange', () => {\n  cancelJump(); simulationStepper.reset();\n")
+    patch("  if (!p.used && Math.hypot", "  if(e.type==='pointercancel')cancelJump();\n  if (e.type!=='pointercancel' && !p.used && Math.hypot")
     patch('function step(dt) {', '''function step(dt) {
   simulationTime+=dt;
   if(P.jumpUntil!=null&&simulationTime>P.jumpUntil)cancelJump();''')
@@ -65,7 +65,7 @@ function jump(){requestJump();}''')
     patch('if (a.finished || r.dead || Math.abs(a.s - r.s) > 0.6 || Math.abs(a.x - r.x) > 0.5 || a.y > 0.3)', 'if (a.finished || r.dead || !below(a,contact(a,r,.6,.5),.3,true))')
     patch('playing && !r.dead && Math.abs(P.s - r.s) < 0.6 && Math.abs(P.x - r.x) < 0.45 && P.y < 0.3', 'playing && !r.dead && below(P,contact(P,r,.6,.45),.3)')
     patch('  const dt = Math.min(0.05, (now - last) / 1000);', '  const dt = Math.max(0, (now - last) / 1000);')
-    patch('function tick(dt) {\n  step(dt);', '''simulationStepper=Reliability.createStepper(step,()=>S.mode);
+    patch('function tick(dt) {\n  // Sub-steps of 1/120s or less: one step per frame at 30fps moves a boosted kart further than an obstacle\'s hit window, so it passed straight through.\n  for (let n = Math.ceil(dt * 120), i = 0; i < n; i++) step(dt / n);', '''simulationStepper=Reliability.createStepper(step,()=>S.mode);
 function advanceSimulation(dt,manualAdvance=false){simulationStepper.advance(dt,manualAdvance);}
 function tick(dt,manualAdvance=false) {
   advanceSimulation(dt,manualAdvance);

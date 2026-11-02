@@ -16,7 +16,7 @@ Then visit http://localhost:8000.
 
 ## Editions
 
-- **Bull Run 3D:** the latest version, with momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, charged item stacking, effects, arcade audio, and Easy/Medium/Hard opponents.
+- **Bull Run 3D:** the latest version, with momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a damped chase camera, animated Trump podium hazards, 3D power-ups, charged item stacking, effects, arcade audio, a music track for each sector, and Easy/Medium/Hard opponents.
 - **Bull Run Grand Prix:** the earlier colorful 2D racing edition.
 - **Midnight Exchange:** the alternative visual edition.
 
@@ -27,9 +27,9 @@ Then visit http://localhost:8000.
 - Up arrow or Space: jump; down arrow: slide.
 - 1, 2, 3: use items; P: pause.
 - Matching pickups upgrade a held item to level 3. MAX READY shows its strongest version. Another matching pickup awards cash. Using the item consumes the slot at any level.
-- Mobile: hold a screen edge to steer. Tap the center or swipe up to jump, swipe down to slide, and tap an item to use it. Hold DRIFT with another finger, then release it to boost. Pause and rotation clear held controls.
+- Mobile: hold the ◀ ▶ corner buttons to steer, tap the road to jump, swipe down to slide, tap a slot to fire. In 3D, drift by holding ◀ or ▶ with one thumb and the DRIFT button on the other side with the other thumb; release DRIFT to boost. Pause and rotation clear held controls.
 - Choose Easy, Medium or Hard on the title screen. Rival pace, reactions and weapon timing change; player handling stays the same. The chosen mode is fixed for that race. Results include Change difficulty to return to setup. Best records are separate, and an existing record imports into Medium once.
-- Pause menu: arcade music and Auto/Standard/Economy graphics. Auto uses Economy for touch or compact screens and Standard for larger desktop screens. Manual choices persist. Economy reduces scenery, crowds and shadows. SND button: mute music and effects.
+- Pause menu: music toggle and Auto/Standard/Economy graphics. Auto uses Economy for touch or compact screens and Standard for larger desktop screens. Manual choices persist. Economy reduces scenery, crowds and shadows. SND button: mute music and effects.
 - The opening course includes a banked corner and an automatic launch ramp with warning signs.
 - Jump input is buffered for 100 ms before landing. Fixed simulation steps and swept collision checks handle fast contacts.
 
@@ -43,7 +43,7 @@ Python 3 is required. Run from the repository root:
 python3 work/3d/build.py
 ```
 
-The builder combines `outputs/bull-run-grand-prix.html` with the renderer and enhancements in `work/3d/`, and writes `outputs/bull-run-3d.html`. The earlier 2D HTML files are standalone source editions.
+The builder combines `outputs/bull-run-grand-prix.html` with the renderer and enhancements in `work/3d/`, and writes `outputs/bull-run-3d.html`. Every patch states how many times its anchor must appear in the source; if an edit to the 2D file moves one, the build stops and names the anchor instead of writing a game with a feature missing. The earlier 2D HTML files are standalone source editions.
 
 ## Verify changes
 
@@ -70,6 +70,16 @@ Run `npm run profile:devices` for matched scene work counters. `BUDGET_HTML` can
 
 `PLAYWRIGHT_MODULE` can point to an existing Playwright installation when dependencies are provided by a development environment.
 
-## Third-party code
+## Music files
+
+The sector music lives in `work/3d/music/` as 96 kbps MP3s (`circuit.mp3`, `speedway.mp3`, `castle.mp3`). The build embeds them in the HTML, so the 3D edition still plays music when opened straight from disk.
+
+## Third-party code and music
 
 Three.js is distributed under the MIT license; see `outputs/THREE-LICENSE.txt`. This repository does not assign a license to the original game code.
+
+Music by MintoDog, released under CC0 on OpenGameArt and re-encoded at a lower bitrate and matched in loudness:
+
+- Circuit: [Sunny City](https://opengameart.org/content/sunny-city)
+- Crypto Speedway: [Blossom Mountain (Remake)](https://opengameart.org/content/blossom-mountainremake)
+- Meltdown Castle: [Sky Blue Street](https://opengameart.org/content/sky-blue-street)

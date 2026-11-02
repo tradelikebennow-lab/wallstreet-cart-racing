@@ -4,7 +4,7 @@ const vm=require('node:vm');
 const fs=require('node:fs');
 function controls(){
  const surface=()=>{const handlers={};return{handlers,hidden:false,setAttribute(){},setPointerCapture(){},releasePointerCapture(){},addEventListener(type,f){(handlers[type]??=[]).push(f);},fire(type,extra={}){for(const f of handlers[type]||[])f({type,preventDefault(){},stopPropagation(){},...extra});}};};
- const button=surface(),window=surface(),P={},S={mode:'play'},context=vm.createContext({window,P,S,$:id=>id==='bDrift'?button:surface(),audio(){}});
+ const button=surface(),window=surface(),P={},S={mode:'play'},context=vm.createContext({window,P,S,$:id=>id==='bDrift'?button:surface(),document:{querySelectorAll:q=>q==='.drift-button'?[button]:[]},audio(){}});
  vm.runInContext(fs.readFileSync('work/3d/driving.js','utf8'),context);vm.runInContext('initDrivingControls()',context);
  return{button,window,P,S,cancel(){vm.runInContext('cancelDrift()',context);}};
 }

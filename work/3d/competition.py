@@ -1,12 +1,12 @@
-from pathlib import Path
+from patching import read, sub
 
 
-def integrate(s, replace_once):
+def integrate(s, sub):
     def patch(old, new):
         nonlocal s
-        s = replace_once(s, old, new)
+        s = sub(s, old, new)
 
-    patch('// ---------- racers ----------', Path('work/3d/competition.js').read_text() + '\n// ---------- racers ----------')
+    patch('// ---------- racers ----------', read('work/3d/competition.js') + '\n// ---------- racers ----------')
     patch("let best = { pnl: 0, place: 0 };\ntry { const b = JSON.parse(localStorage.getItem('bull-run-3d-best') || 'null'); if (b) best = b; } catch (e) {}", '''let competitionStorage;
 try{competitionStorage=window.localStorage;}catch{}
 let selectedDifficulty=Competition.readDifficulty(competitionStorage);
@@ -18,7 +18,7 @@ let best=bestRecords.byDifficulty[selectedDifficulty]||{pnl:0,place:0};''')
     patch('atk: rand(9, 15), finished: false', 'atk: rand(...S.profile.attackCooldown), finished: false')
     start = s.index('function updateAI(a, w) {')
     end = s.index('\nconst gavelPh =', start)
-    patch(s[start:end], Path('work/3d/competition-ui.js').read_text().rstrip())
+    patch(s[start:end], read('work/3d/competition-ui.js').rstrip())
     patch('for (const a of S.rivals) updateAI(a, w);', 'for (const a of S.rivals) updateAI(a, w, remember);')
     patch('Math.max(18, VMAX * a.skill)', 'Math.max(18, Competition.targetSpeed(VMAX,a.skill,0,S.profile))')
     patch("  if (!S.dnf) { let ch = false; if (!best.place || place < best.place) { best.place = place; ch = true; } if (S.pnl > best.pnl) { best.pnl = S.pnl; ch = true; } if (ch) { try { localStorage.setItem('bull-run-3d-best', JSON.stringify(best)); } catch (e) {} } }", '''  if(!S.dnf){bestRecords=Competition.recordBest(bestRecords,S.difficulty,{pnl:S.pnl,place});Competition.saveBests(competitionStorage,bestRecords);}''')

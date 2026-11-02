@@ -51,12 +51,12 @@ const {openGame}=require('./browser-lib.cjs');
  const touch=await openGame({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
  try{
   const p=touch.page;await p.evaluate(()=>raceQA.clean());
-  const cdp=await p.context().newCDPSession(p),r=await p.locator('#bDrift').boundingBox();
-  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x+r.width/2,y:r.y+r.height/2,id:1},{x:365,y:350,id:2}]});
+  const cdp=await p.context().newCDPSession(p),r=await p.locator('#bDrift').boundingBox(),steer=await p.locator('#bRight').boundingBox();
+  await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x+r.width/2,y:r.y+r.height/2,id:1},{x:steer.x+steer.width/2,y:steer.y+steer.height/2,id:2}]});
   await p.evaluate(()=>advanceTime(850));assert((await p.evaluate(()=>raceQA.snapshot())).drift.tier>=1);
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await p.evaluate(()=>advanceTime(20));assert((await p.evaluate(()=>raceQA.snapshot())).player.boost>0);
   await p.keyboard.press('p');await p.locator('#musicEnabled').uncheck();await p.locator('#bResume').click();
-  await p.evaluate(()=>advanceTime(20));assert.equal(await p.evaluate(()=>raceQA.audio().musicEnabled),false);assert.equal(await p.evaluate(()=>raceQA.audio().musicConnected),false);
+  await p.evaluate(()=>advanceTime(20));assert.equal(await p.evaluate(()=>raceQA.audio().musicEnabled),false);assert.equal(await p.evaluate(()=>raceQA.audio().musicPlaying),false);
   await p.locator('#bMute').click();await p.evaluate(()=>advanceTime(20));assert.equal(await p.evaluate(()=>raceQA.audio().muted),true);
   assert.deepEqual(touch.errors,[]);console.log('PASS touch/audio: actual two-finger drift and release, independent music toggle, master mute');
  }finally{await touch.browser.close();}
