@@ -22,6 +22,8 @@ Momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a da
 
 ## Controls
 
+- Choose Bull (horns and a red kart) or Bear (round ears and a blue kart) on the title screen. The preview uses the race model. Both drivers share the same handling, and the game remembers your choice on this device when storage is available.
+
 - Left/right arrows or A/D: steer.
 - Hold Shift while steering, then release Shift: drift turbo.
 - Up arrow or Space: jump; down arrow: slide.

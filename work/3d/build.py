@@ -46,6 +46,7 @@ from devices import integrate as integrate_devices
 s=integrate_devices(s,sub)
 from controls import integrate as integrate_controls
 s=integrate_controls(s,sub)
+s=sub(s,'<label class="difficulty-choice" for="difficultyMode">','''<label class="difficulty-choice" for="driverChoice">Driver <select id="driverChoice" aria-label="Driver"><option value="bull">Bull</option><option value="bear">Bear</option></select></label><label class="difficulty-choice" for="difficultyMode">''')
 s=sub(s,'<script>', '<!-- Three.js license\n'+read('work/3d/THREE-LICENSE.txt')+'\n-->\n<script>',found=2,count=1)
 Path('outputs/index.html').write_text(s,encoding='utf-8')
 Path('outputs/THREE-LICENSE.txt').write_text(read('work/3d/THREE-LICENSE.txt'),encoding='utf-8')

@@ -79,7 +79,29 @@ function init3D(){
  const stands=[];for(let i=0;i<6;i++){const g=new T.Group();for(let row=0;row<3;row++)box(g,mat('#e8d5af'),0,.2+row*.32,-row*.7,5,.3,.8);for(const x of [-2.4,2.4])cylinder(g,white,x,1.7,-1,.07,3.4);round(g,mat(i%2?'#ec705d':'#70b7c8'),0,3.3,-.8,5.5,.15,2.8,.08);sign(g,['BULLS ON PARADE','BUY THE DIP','BEARS USE BRAKES'][i%3],0,2.65,.1,4.8,.5,'#fff4d6','#274d61');scene.add(g);stands.push(g);}
  const crowd=batch(sphere,mat('#ffffff'),72,false);for(let i=0;i<72;i++)crowd.setColorAt(i,new T.Color(['#f07564','#6ca8e4','#a895d5','#eecc63','#79bb92'][i%5]));
  const flags=[];for(let i=0;i<16;i++){const g=new T.Group();cylinder(g,white,0,1.7,0,.045,3.4);orb(g,gold,0,3.45,0,.09);const flag=box(g,mat(i%2?'#ed6d57':'#67bace'),.46,3.05,0,.9,.5,.025);g.userData.flag=flag;scene.add(g);flags.push(g);}
- function makeKart(color,number,skin='#efbc91'){
+ function animalHead(kind){
+  const head=new T.Group(),bull=kind==='bull';
+  const fur=mat(bull?'#9d5439':'#875837'),muzzle=mat(bull?'#e6aa89':'#e7bd83');
+  head.name=kind;head.position.set(0,1.89,.04);
+  orb(head,fur,0,.02,0,bull?.48:.46,.43,.39);
+  orb(head,muzzle,0,-.14,-.32,.32,.20,.18);
+  for(const side of [-1,1]){
+   orb(head,white,side*.18,.10,-.33,.10,.12,.065);
+   orb(head,dark,side*.18,.10,-.39,.05,.073,.026);
+   if(bull){
+    orb(head,fur,side*.44,.06,0,.19,.085,.12);
+    orb(head,white,side*.45,.25,.01,.23,.10,.11).rotation.z=side*.33;
+    mesh(head,conegeom,white,side*.60,.39,.01,.106,.24,.106).rotation.z=-side*.27;
+    orb(head,dark,side*.105,-.13,-.49,.045,.037,.02);
+   }else{
+    orb(head,fur,side*.34,.35,0,.17,.19,.11);
+    orb(head,muzzle,side*.34,.36,-.085,.092,.108,.04);
+   }
+  }
+  if(!bull)orb(head,dark,0,-.065,-.48,.12,.078,.05);
+  return head;
+ }
+ function makeKart(color,number,skin='#efbc91',selectable=false){
   const g=new T.Group(),body=new T.Group();g.add(body);const paint=new T.MeshPhysicalMaterial({color,roughness:.27,metalness:.12,clearcoat:1,clearcoatRoughness:.18});
   round(body,dark,0,.34,0,1.4,.24,2.15,.12);round(body,paint,0,.58,-.08,1.6,.48,2.0,.22);orb(body,paint,0,.73,-.84,.77,.36,.62);
   round(body,white,0,.65,-1.25,1.45,.16,.2,.07);round(body,chrome,0,.37,1.11,1.58,.17,.22,.06);
@@ -95,11 +117,24 @@ function init3D(){
    for(let j=0;j<6;j++){const a=j*Math.PI/3;orb(spin,dark,Math.sign(x)*.202,Math.sin(a)*.145,Math.cos(a)*.145,.028);}
    wheels.push({pivot,spin,front:z<0});
   }
-  const driver=new T.Group();body.add(driver);const suit=mat(color,.65),skinMat=mat(skin,.8);
-  orb(driver,suit,0,1.22,.1,.38,.43,.30);orb(driver,skinMat,0,1.83,.04,.37,.40,.34);
-  const helmet=orb(driver,paint,0,1.99,.09,.405,.30,.38);orb(driver,paint,0,1.8,.22,.39,.27,.25);
-  round(driver,white,0,2.22,.08,.11,.028,.42,.03);
-  orb(driver,mat('#2d5c6e',.15,.35),0,1.96,-.245,.30,.15,.065);
+  const driver=new T.Group();body.add(driver);const suit=selectable?mat(color,.65).clone():mat(color,.65),skinMat=mat(skin,.8);
+  const torso=orb(driver,suit,0,1.22,.1,.38,.43,.30);
+  let selectDriver;
+  if(selectable){
+   const bull=animalHead('bull'),bear=animalHead('bear');
+   driver.add(bull,bear);
+   selectDriver=kind=>{
+    bear.visible=kind==='bear';bull.visible=!bear.visible;
+    paint.color.set(bear.visible?'#2869af':color);
+    suit.color.set(bear.visible?'#294d82':color);
+    torso.scale.x=bear.visible?.49:.38;
+   };
+  }else{
+   orb(driver,skinMat,0,1.83,.04,.37,.40,.34);
+   orb(driver,paint,0,1.99,.09,.405,.30,.38);orb(driver,paint,0,1.8,.22,.39,.27,.25);
+   round(driver,white,0,2.22,.08,.11,.028,.42,.03);
+   orb(driver,mat('#2d5c6e',.15,.35),0,1.96,-.245,.30,.15,.065);
+  }
   for(const x of [-.37,.37]){const arm=orb(driver,suit,x,1.29,-.15,.14,.30,.13);arm.rotation.x=-.65;orb(driver,white,x,1.22,-.40,.15,.13,.14);}
   const wheel=new T.Mesh(new T.TorusGeometry(.28,.045,8,20),rubber);wheel.position.set(0,1.25,-.44);wheel.rotation.x=-.5;driver.add(wheel);
   sign(body,String(number).padStart(2,'0'),0,.68,1.025,.4,.22,'#fff4cc','#243d55');
@@ -107,9 +142,18 @@ function init3D(){
   const shadow=new T.Mesh(new T.PlaneGeometry(2.6,3.2),new T.MeshBasicMaterial({map:shadowTex,transparent:true,depthWrite:false}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.025;g.add(shadow);
   const bubble=orb(g,new T.MeshPhysicalMaterial({color:'#77dfff',transparent:true,opacity:.20,roughness:.1,metalness:.1,depthWrite:false,side:T.FrontSide}),0,1,0,1.48,1.65,1.65);bubble.visible=false;bubble.castShadow=false;
   const flames=[];for(const x of [-.56,.56]){const flame=orb(body,new T.MeshBasicMaterial({color:'#ffcc58'}),x,.38,1.6,.12,.12,.46);flame.visible=false;flames.push(flame);}
-  scene.add(g);return {g,body,driver,wheels,bubble,shadow,flames};
+  scene.add(g);return {g,body,driver,wheels,bubble,shadow,flames,selectDriver};
  }
- const player=makeKart('#ef534b',7),racers=RIVALS.map((a,i)=>makeKart(a.jacket,i+1,a.skin));
+ const player=makeKart('#ef534b',7,undefined,true),racers=RIVALS.map((a,i)=>makeKart(a.jacket,i+1,a.skin));
+ const driverChoice=$('driverChoice');
+ try{if(localStorage.getItem('bullrun.driver')==='bear')driverChoice.value='bear';}catch{}
+ player.selectDriver(driverChoice.value);
+ driverChoice.addEventListener('change',()=>{
+  if(S.mode!=='title')return;
+  player.selectDriver(driverChoice.value);
+  try{localStorage.setItem('bullrun.driver',driverChoice.value);}catch{}
+  render3D(0);
+ });
  player.body.userData.playerBody=true;player.bubble.material.dispose();
  const shieldMat=new T.ShaderMaterial({transparent:true,depthWrite:false,side:T.FrontSide,uniforms:{flowTime:{value:0},impact:{value:99},shieldOn:{value:0},tint:{value:new T.Color('#77dfff')}},vertexShader:`varying vec3 surfaceNormal;varying vec3 eyeDirection;varying vec2 shieldUV;void main(){vec4 p=modelViewMatrix*vec4(position,1.);surfaceNormal=normalize(normalMatrix*normal);eyeDirection=normalize(-p.xyz);shieldUV=uv;gl_Position=projectionMatrix*p;}`,fragmentShader:`uniform float flowTime;uniform float impact;uniform float shieldOn;uniform vec3 tint;varying vec3 surfaceNormal;varying vec3 eyeDirection;varying vec2 shieldUV;void main(){float rim=pow(1.-abs(dot(normalize(surfaceNormal),normalize(eyeDirection))),2.);float ripple=exp(-pow((distance(shieldUV,vec2(.25,.5))-impact*.9)*20.,2.))*max(0.,1.-impact/.65);float lines=pow(.5+.5*sin(shieldUV.y*65.-flowTime*3.),12.);float alpha=shieldOn*(.06+rim*.3+lines*.055)+ripple*.85+max(0.,1.-impact/.65)*(.12+rim*.35);gl_FragColor=vec4(tint+vec3(ripple*.5),alpha);}`});
  player.bubble.material=shieldMat;
@@ -314,6 +358,7 @@ function init3D(){
     k.wheels.forEach(w=>{w.spin.rotation.x=-a.run*1.7;w.pivot.rotation.y=w.front?(isPlayer?-P.steer*.3:0):0;});k.bubble.visible=isPlayer&&S.shield>0;k.shadow.material.opacity=1-Math.min(.7,(a.y||0)*.3);k.flames.forEach(f=>{f.visible=isPlayer&&P.boost>0;f.scale.z=reducedMotion.matches?.58:.55+Math.sin(time*32)*.2;});
   }
   drive(player,P,true);S.rivals.forEach((a,i)=>drive(racers[i],a,false));
+  if(showroom)player.body.rotation.y=-2.65;
   const live=new Set();for(const e of S.ents){const d=e.s-P.s;if(e.dead||d< -9||d>125)continue;live.add(e.id);let g=entityModels.get(e.id);if(!g){g=obstacle(e);entityModels.set(e.id,g);}place(g,e.x,d);if(g.userData.spin){g.rotation.y=e.t*1.5;g.position.y+=Math.sin(e.t*3)*.13;}if(g.userData.art){g.userData.art.rotation.y=Math.sin(e.t*1.8)*.32;g.userData.art.rotation.z=Math.sin(e.t*2)*.06;g.userData.art.position.y=1.4+Math.sin(e.t*3)*.14;}if(g.userData.trump){const tr=g.userData.trump,moving=Math.abs(e.tx-e.x)>.03;g.position.y+=moving?Math.abs(Math.sin(e.t*10))*.14:0;tr.head.rotation.y=Math.sin(e.t*2)*.20;tr.arms[0].rotation.z=-.20-Math.sin(e.t*3)*.23;tr.arms[1].rotation.z=.55+Math.sin(e.t*4)*.32;
     tr.papers.forEach((p,i)=>{const age=(e.t*.7+i*.2)%1;p.position.set((i%2?1:-1)*(.6+age*.7),2.2-age*1.8,.3+age*.9);p.rotation.set(age*5,i,age*7);});
     if(tr.lastQuote!==e.quote){tr.quote.material.map.dispose();tr.quote.material.map=textTexture(e.quote,'#233b5b','#fff9e3',1024,202);tr.quote.material.needsUpdate=true;tr.lastQuote=e.quote;}
