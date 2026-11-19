@@ -22,6 +22,8 @@ Momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a da
 
 ## Controls
 
+- The race progress bar shows five rival dots in kart colors. Each has its own row so close racers stay visible. Your gold diamond and vertical line mark your distance. Rivals to its right are ahead.
+
 - Choose Bull (horns and a red kart) or Bear (round ears and a blue kart) on the title screen. The preview uses the race model. Both drivers share the same handling, and the game remembers your choice on this device when storage is available.
 
 - Left/right arrows or A/D: steer.

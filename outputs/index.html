@@ -259,6 +259,36 @@ kbd{display:inline-block;min-width:18px;padding:0 4px;border:1px solid rgba(255,
 @media(min-width:721px){.wpn{grid-template-rows:13px minmax(0,1fr) 12px}.wpn canvas{grid-column:1;grid-row:1 / span 3}.wpn .nm{grid-column:2;grid-row:2;align-self:center;font-size:12px;line-height:1.05}.item-action{grid-column:2;grid-row:3;margin-top:0;align-self:center}.stack-badge{position:static;grid-column:2;grid-row:1;justify-self:start;font-size:7px;padding:1px 3px}}
 @media(max-width:720px){.wpn{grid-template-columns:1fr;grid-template-rows:42px 14px 10px 4px}.wpn canvas{width:40px;height:40px;grid-column:1;grid-row:1}.wpn .nm{grid-column:1;grid-row:2;line-height:1;align-self:center}.item-action{grid-column:1;grid-row:3;margin:0;align-self:center}.wpn .pips{position:static;grid-column:1;grid-row:4;transform:none;margin:0;align-self:center;justify-self:center}.wpn.empty{min-height:86px}}
 @media(max-width:360px){.wpn .nm{font-size:9px}.item-action{font-size:7px}}
+/* Keep true horizontal race distance, even when all five rivals are side by side. */
+.hud-c .rt#rt{
+ --dot-size:7px;
+ --row-step:8px;
+ --baseline:calc(5 * var(--row-step));
+ height:calc(var(--baseline) + 9px);
+ margin:3px 6px 2px;
+ isolation:isolate;
+}
+.hud-c #rt::before{top:var(--baseline)}
+.hud-c #rt .flag{top:auto;bottom:3px;right:-4px;width:8px;height:8px}
+.hud-c #rt .dot{
+ top:calc(var(--racer-row) * var(--row-step));
+ width:var(--dot-size);height:var(--dot-size);
+ margin:0;transform:translateX(-50%);z-index:2;
+ border:1px solid #294254;transition:none;
+}
+.hud-c #rt .dot.me{
+ top:0;height:calc(var(--baseline) + 3px);width:2px;
+ background:#674700;border:0;border-radius:0;z-index:1;
+}
+.hud-c #rt .dot.me::after,.hud-c .player-key::before{
+ content:"";width:7px;height:7px;box-sizing:border-box;
+ background:#ffc43a;border:1px solid #674700;transform:rotate(45deg);
+}
+.hud-c #rt .dot.me::after{position:absolute;bottom:-3px;left:-2.5px}
+.hud-c .player-key{display:inline-flex;align-items:center;gap:4px;margin-left:auto;margin-right:8px}
+@media(max-width:720px),(max-height:500px){
+ .hud-c .rt#rt{--dot-size:6px;--row-step:7px}
+}
 @media(max-height:500px) and (min-width:600px){.wpn{grid-template-columns:38px minmax(0,1fr);grid-template-rows:10px minmax(0,1fr) 9px;min-height:55px}.wpn .nm{grid-column:2;grid-row:2;font-size:9px;white-space:nowrap;align-self:center;text-align:left}.wpn canvas{grid-column:1;grid-row:1 / span 3;width:34px;height:34px}.stack-badge{position:static;grid-column:2;grid-row:1;justify-self:start;font-size:6px;padding:1px 2px}.wpn.lv3 .stack-badge::before{display:none}.item-action{grid-column:2;grid-row:3;font-size:7px}.wpn .pips{position:absolute;grid-column:auto;grid-row:auto;left:10px;top:auto;bottom:3px;transform:none;margin:0}.wpn.empty{min-height:55px}}
 
 .drive-tools{position:absolute;left:max(18px,env(safe-area-inset-left));bottom:72px;z-index:3;display:grid;gap:10px;justify-items:start}.speed-readout{color:#fff;font:800 10px var(--mono);text-shadow:0 2px 5px #19384e}.speed-readout b{font:900 34px var(--body);margin-right:5px}.drift-button{touch-action:none;user-select:none;min-width:106px;min-height:49px;border:2px solid #fff;border-radius:13px;padding:7px 12px;background:#254e6de8;color:white;box-shadow:0 4px 0 #133248;font:900 13px var(--body)}.drift-button small{display:block;font:700 9px var(--mono);margin-top:3px;color:#c6e6f7}.drift-button[aria-pressed=true]{background:#db9935;transform:translateY(3px);box-shadow:0 1px 0 #133248}.drift-meter{align-self:center;width:260px;max-width:100%;background:#163c53e8;color:#fff;padding:6px 10px;border-radius:10px;font:800 9px var(--mono);--spark:#88d3ff}.drift-meter[data-tier="2"]{--spark:#ffc264}.drift-meter[data-tier="3"]{--spark:#f78eea}.drift-meter>div{height:5px;margin-top:5px;background:#ffffff2a;border-radius:3px;overflow:hidden}.drift-meter i{display:block;height:100%;background:var(--spark);width:0}.drift-meter span{color:var(--spark)}#game[data-mode=title] .drive-tools,#game[data-mode=results] .drive-tools,#game[data-mode=paused] .drive-tools{display:none}
@@ -2364,6 +2394,18 @@ function presentItemFeedback(event){
 reducedMotion.addEventListener('change',()=>{if(itemFeedbackReady)clearItemFeedback(true);});
 function initRaceUX(){
  initDrivingControls(); initArcadeAudio();
+ const route=el.rt;
+ route.setAttribute('role','group');
+ route.setAttribute('aria-label','Race progress from start to finish');
+ for(const [row,dot] of dots.entries()){
+  dot.style.setProperty('--racer-row',row);
+  dot.setAttribute('role','img');
+  dot.setAttribute('aria-label',dot.title);
+ }
+ const playerKey=document.createElement('span');
+ playerKey.className='player-key';
+ playerKey.textContent='You';
+ el.prog.before(playerKey);
  const ticker=document.querySelector('.ticker');ticker.insertBefore(el.bk,$('tkWrap'));el.bk.setAttribute('role','status');el.bk.setAttribute('aria-live','polite');el.bk.setAttribute('aria-atomic','true');
  for(const node of document.querySelectorAll('.arm')){const k=ORDER[[...document.querySelectorAll('.arm')].indexOf(node)];node.querySelector('b').textContent=ITEM_META[k].name;}
 }

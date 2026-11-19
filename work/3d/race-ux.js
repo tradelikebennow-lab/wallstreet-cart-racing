@@ -23,6 +23,18 @@ function presentItemFeedback(event){
 }
 reducedMotion.addEventListener('change',()=>{if(itemFeedbackReady)clearItemFeedback(true);});
 function initRaceUX(){
+ const route=el.rt;
+ route.setAttribute('role','group');
+ route.setAttribute('aria-label','Race progress from start to finish');
+ for(const [row,dot] of dots.entries()){
+  dot.style.setProperty('--racer-row',row);
+  dot.setAttribute('role','img');
+  dot.setAttribute('aria-label',dot.title);
+ }
+ const playerKey=document.createElement('span');
+ playerKey.className='player-key';
+ playerKey.textContent='You';
+ el.prog.before(playerKey);
  const ticker=document.querySelector('.ticker');ticker.insertBefore(el.bk,$('tkWrap'));el.bk.setAttribute('role','status');el.bk.setAttribute('aria-live','polite');el.bk.setAttribute('aria-atomic','true');
  for(const node of document.querySelectorAll('.arm')){const k=ORDER[[...document.querySelectorAll('.arm')].indexOf(node)];node.querySelector('b').textContent=ITEM_META[k].name;}
 }
