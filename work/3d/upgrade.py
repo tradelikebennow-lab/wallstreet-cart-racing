@@ -4,7 +4,7 @@ from patching import read, sub
 def upgrade(s):
     helpers = '\n'.join(read('work/3d/' + name + '.js') for name in ['handling', 'course', 'camera', 'collisions', 'reliability'])
     s = sub(s, '// Real WebGL scene.', helpers + '\n// Real WebGL scene.')
-    s = sub(s, 'Object.assign(P, { drifting:false,', 'Object.assign(P, { vx:0, heading:0, rampLaunchId:null, drifting:false,')
+    s = sub(s, 'Object.assign(P, { drifting:false,', 'Object.assign(P, { vx:0, heading:0, rampLaunchId:null, openingBoostUsed:false, drifting:false,')
     old = '''  P.steer += (st - P.steer) * Math.min(1, w * 14);
   if (S.mode !== 'dying') P.x += P.steer * (P.drifting ? .85 : 3.3) * w - curvAt(P.s) * P.v * 2.6 * w;
   P.x = clamp(P.x, -2.7, 2.7);'''
@@ -12,7 +12,9 @@ def upgrade(s):
   if(S.mode!=='dying')Object.assign(P,Handling.stepHandling(P,{steer:st,drifting:P.drifting},{...roadSurface,curvature:curvAt(P.s),offroad:Math.abs(P.x)>1.62,airborne:P.y>.05,grip:P.freeze>0?.13:roadSurface.grip},w));'''
     s = sub(s, old, new)
     s = sub(s, '  P.s += dz;', '''  const ramp=Course.crossedRampExit(P.s,P.s+dz);
+  const previousStation=P.s;
   P.s += dz;
+  if(playing)updateOpeningChoice(previousStation);
   if(ramp&&P.rampLaunchId!==ramp.id){P.rampLaunchId=ramp.id;if(P.y<=.001&&P.vy<=0&&P.freeze<=0&&Math.abs(P.x)<=1.62){P.vy=ramp.launchSpeed;P.slide=0;sfx.jump();}}''')
     s = sub(s, 'const curvAt = s => { const i = s | 0;', 'const curvAt = s => { if(s>180&&s<330)return .006*Math.sin(Math.PI*(s-180)/150)**2; const i = s | 0;')
     s = sub(s, 'function addObs(type, x, span, extra = 0) {', '''function addObs(type, x, span, extra = 0) {

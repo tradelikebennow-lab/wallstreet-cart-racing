@@ -1,4 +1,22 @@
 let driftInput=null;
+function updateOpeningChoice(previousStation){
+ const {station,inside,outside,halfWidth,halfLength}=Course.openingChoice;
+ const spawnStation=station-FAR;
+ if(previousStation<spawnStation && P.s>=spawnStation){
+  addItem(outside,rollItem(),spawnStation-P.s);
+ }
+ if(P.openingBoostUsed || P.s<station-halfLength || previousStation>station+halfLength ||
+    Math.abs(P.x-inside)>halfWidth || P.y>.05 || P.vy>0 || P.freeze>0)return;
+ P.openingBoostUsed=true;
+ const multiplier=1.35;
+ if(P.boost<=0 || P.boostMult<=multiplier){
+  P.boost=Math.max(P.boost,1.15);
+  P.boostMult=multiplier;
+ }
+ P.v=Math.max(P.v,VMAX*multiplier);
+ sfx.boost();
+ setRaceFeedback('INSIDE BOOST!','#60efb0');
+}
 function clearDriftInput(){
  const input=driftInput;driftInput=null;
  if(input?.kind==='pointer'){try{input.button.releasePointerCapture(input.id);}catch{}}

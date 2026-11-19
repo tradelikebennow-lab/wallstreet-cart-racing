@@ -226,6 +226,17 @@ function init3D(){
  const arrowGeo=new T.ShapeGeometry(arrowShape);arrowGeo.rotateX(-Math.PI/2);
  const arrowMat=new T.MeshBasicMaterial({color:'#ffeb84',transparent:true,opacity:.85,side:T.DoubleSide,depthWrite:false});
  const rampArrows=[];for(let i=0;i<12;i++){const g=new T.Mesh(arrowGeo,arrowMat);g.castShadow=false;scene.add(g);rampArrows.push(g);}
+ const choice=Course.openingChoice;
+ const boostStrip=new T.Group();
+ box(boostStrip,mat('#116653'),0,0,0,2*choice.halfWidth*2.8,.045,2*choice.halfLength*1.6);
+ const chevronMaterial=new T.MeshBasicMaterial({color:'#adff79',side:T.DoubleSide});
+ for(const z of [-2.4,0,2.4]){
+  const chevron=new T.Mesh(arrowGeo,chevronMaterial);
+  chevron.position.set(0,.04,z);
+  chevron.scale.set(1.65,1,1.65);
+  boostStrip.add(chevron);
+ }
+ scene.add(boostStrip);
  const exhaust=batch(sphere,new T.MeshBasicMaterial({color:'#ffc76b',transparent:true,opacity:.8,depthWrite:false}),140,false);exhaust.count=0;
  const gates=[];for(let i=0;i<4;i++){const g=new T.Group();for(const x of [-5,5]){round(g,mat(['#6bbbc7','#9b87d7','#e9957c','#6bbbc7'][i]),x,2.8,0,.5,5.6,.6,.13);orb(g,gold,x,5.6,0,.33);}round(g,mat('#f9e9bc'),0,5.05,0,10.6,1,.7,.2);sign(g,['OPENING BELL CUP','CRYPTO SPEEDWAY','MELTDOWN CASTLE','CLOSING BELL'][i],0,5.15,.38,9,.54,'#fff0cf','#234b64');for(let j=0;j<20;j++)box(g,j%2?white:dark,-4.75+j*.5,4.67,.37,.5,.2,.025);scene.add(g);gates.push(g);}
 
@@ -314,6 +325,9 @@ function init3D(){
   if(!reducedMotion.matches)shotModels.forEach((g,i)=>{if(!g.visible)return;const a=shots[i];for(let j=0;j<5;j++){const age=(j+(time*9)%1)/5,d=a.s-P.s-.6-age*3.4,p=coord(a.x,d,1.1);inst(exhaust,trailCount++,p.x,p.y,p.z,.12*(1-age)+.025,.12*(1-age)+.025,.28*(1-age)+.035);}});
   exhaust.count=trailCount;exhaust.visible=trailCount>0;exhaust.instanceMatrix.needsUpdate=true;
   let arrowCount=0;rampArrows.forEach((g,i)=>{const s=410+i*2.4+(time*3)%2.4,d=s-P.s;g.visible=d>-8&&d<100;if(g.visible){place(g,0,d,.055);arrowCount++;}});
+  const stripDistance=choice.station-P.s;
+  boostStrip.visible=stripDistance>-10 && stripDistance<FAR;
+  if(boostStrip.visible)place(boostStrip,choice.inside,stripDistance,.09);
   courseSigns.forEach(({g,s,x})=>{const d=s-P.s;g.visible=d>-12&&d<125;if(g.visible)place(g,x,d);});
   gates.forEach((g,i)=>{const d=[4,1400,2800,4200][i]-P.s;g.visible=d>-16&&d<125;if(g.visible)place(g,0,d);});
   if(showroom){camera.position.set(7+Math.sin(time*.15)*.6,4.0,8.4);camera.lookAt(-2.6,1.3,-1);camera.fov=46;cameraState=null;}

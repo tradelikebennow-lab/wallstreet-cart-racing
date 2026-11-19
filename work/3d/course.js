@@ -1,4 +1,6 @@
 const Course = (() => {
+ // The opening bank curves right. Positive lane coordinates are on its inside.
+ const openingChoice=Object.freeze({station:300,inside:1,outside:-1,halfWidth:.44,halfLength:2.5});
  const features=Object.freeze([{id:'opening-bank',kind:'bank',start:180,end:330},{id:'opening-ramp',kind:'ramp',start:410,exit:442,end:475,launchSpeed:9.2}]);
  const smooth=t=>t*t*(3-2*t),unit=t=>Math.max(0,Math.min(1,t));
  function sampleCourse(s,x=0){
@@ -15,6 +17,6 @@ const Course = (() => {
  function crossedRampExit(s0,s1){return features.find(f=>f.kind==='ramp'&&s0<f.exit&&s1>=f.exit)||null;}
  function isSpawnClear(s,depth=0){return features.every(f=>s+depth/2<f.start-20||s-depth/2>f.end+30);}
  function worldHeight(s,x,y=0,originS=0){return 2*(sampleCourse(s,x).height-sampleCourse(originS,0).height+y);}
- return {features,sampleCourse,crossedRampExit,isSpawnClear,worldHeight};
+ return {features,openingChoice,sampleCourse,crossedRampExit,isSpawnClear,worldHeight};
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=Course;
