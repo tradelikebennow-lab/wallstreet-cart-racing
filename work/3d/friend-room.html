@@ -1,0 +1,12 @@
+<button id="friendOpen" class="race-options" type="button">Race a friend</button>
+<dialog id="friendLobby" aria-labelledby="friendTitle">
+ <h2 id="friendTitle">Race a friend</h2>
+ <p id="friendStatus" role="status">Create a room or enter your friend’s code.</p>
+ <div id="friendSetup">
+  <button type="button" class="go" id="friendCreate">Create room</button>
+  <form id="friendForm"><label for="friendCode">Room code</label><div><input id="friendCode" maxlength="6" minlength="6" required autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="race-options">Join race</button></div></form>
+ </div>
+ <div id="friendInvite" hidden><strong id="inviteCode"></strong><button id="copyInvite" class="race-options">Copy invite</button></div>
+ <p id="friendRules">Race four AI karts and your friend through all three sectors. Drift for speed or collect a boost rocket and fire it with 1 or the item slot.</p>
+ <button id="friendClose" class="race-options">Back</button>
+</dialog>

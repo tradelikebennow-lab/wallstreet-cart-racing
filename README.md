@@ -22,6 +22,12 @@ Momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a da
 
 ## Controls
 
+### Race a friend
+
+Run `npm ci --omit=dev` and `npm start` with Node 22 or later. Open `http://localhost:18787` on the host, choose a driver, then **Race a friend → Create room**. A friend can open the same server and enter the six-character code, or use **Copy invite** and then **Join race**. On a LAN, open the host computer’s LAN address on both devices before copying the invite. Across the internet, both players need the same publicly reachable HTTPS server with WebSocket upgrades on `/rooms`. Set `PORT` and `BIND_ADDRESS` to configure the listener. Static file hosting alone supports solo play.
+
+Friend races use a shared countdown, two human drivers, four AI racers and all three sectors. The server controls movement, the opening inside boost, jump ramp, contested boost rockets, and finish times. Fire a stored rocket with **1** or the first item slot. This racing mode uses boost rockets as its item set. Solo combat, market hazards and best records belong to the solo mode. Leaving a room ends it for both players. Run `node tests/friend-rooms.cjs` for the two-browser check, or set `FULL_FRIEND_RACE=1` to drive through results.
+
 - The race progress bar shows five rival dots in kart colors. Each has its own row so close racers stay visible. Your gold diamond and vertical line mark your distance. Rivals to its right are ahead.
 
 - Choose Bull (horns and a red kart) or Bear (round ears and a blue kart) on the title screen. The preview uses the race model. Both drivers share the same handling, and the game remembers your choice on this device when storage is available.

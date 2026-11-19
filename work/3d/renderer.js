@@ -145,6 +145,7 @@ function init3D(){
   scene.add(g);return {g,body,driver,wheels,bubble,shadow,flames,selectDriver};
  }
  const player=makeKart('#ef534b',7,undefined,true),racers=RIVALS.map((a,i)=>makeKart(a.jacket,i+1,a.skin));
+ let friendKart,friendSkin;
  const driverChoice=$('driverChoice');
  try{if(localStorage.getItem('bullrun.driver')==='bear')driverChoice.value='bear';}catch{}
  player.selectDriver(driverChoice.value);
@@ -452,7 +453,19 @@ function init3D(){
     if(isPlayer&&(S.mode==='dying'||S.dnf))k.body.rotation.z=Math.min(1.35,S.deadT*2);
     k.wheels.forEach(w=>{w.spin.rotation.x=-a.run*1.7;w.pivot.rotation.y=w.front?(isPlayer?-P.steer*.3:0):0;});k.bubble.visible=isPlayer&&S.shield>0;k.shadow.material.opacity=1-Math.min(.7,(a.y||0)*.3);k.flames.forEach(f=>{f.visible=isPlayer&&P.boost>0;f.scale.z=reducedMotion.matches?.58:.55+Math.sin(time*32)*.2;});
   }
-  drive(player,P,true);S.rivals.forEach((a,i)=>drive(racers[i],a,false));
+  drive(player,P,true);
+  if(friendKart)friendKart.g.visible=false;
+  S.rivals.forEach((a,i)=>{
+   if(!a.friendDriver){drive(racers[i],a,false);return;}
+   racers[i].g.visible=false;
+   if(!friendKart){
+    friendKart=makeKart('#ef534b',8,undefined,true);
+    cueTextures.set('friend',textTexture('FRIEND','#ffffff','#173b50',256,64));
+   }
+   if(friendSkin!==a.friendDriver){friendKart.selectDriver(a.friendDriver);friendSkin=a.friendDriver;}
+   drive(friendKart,a,false);
+   friendKart.body.rotation.y=-a.heading;
+  });
   if(showroom)player.body.rotation.y=-2.65;
   const live=new Set();for(const e of S.ents){const d=e.s-P.s;if(e.dead||d< -9||d>125)continue;live.add(e.id);let g=entityModels.get(e.id);if(!g){g=obstacle(e);entityModels.set(e.id,g);}place(g,e.x,d);if(g.userData.spin){g.rotation.y=e.t*1.5;g.position.y+=Math.sin(e.t*3)*.13;}if(g.userData.art){g.userData.art.rotation.y=Math.sin(e.t*1.8)*.32;g.userData.art.rotation.z=Math.sin(e.t*2)*.06;g.userData.art.position.y=1.4+Math.sin(e.t*3)*.14;}if(g.userData.trump){const tr=g.userData.trump,moving=Math.abs(e.tx-e.x)>.03;g.position.y+=moving?Math.abs(Math.sin(e.t*10))*.14:0;tr.head.rotation.y=Math.sin(e.t*2)*.20;tr.arms[0].rotation.z=-.20-Math.sin(e.t*3)*.23;tr.arms[1].rotation.z=.55+Math.sin(e.t*4)*.32;
     tr.papers.forEach((p,i)=>{const age=(e.t*.7+i*.2)%1;p.position.set((i%2?1:-1)*(.6+age*.7),2.2-age*1.8,.3+age*.9);p.rotation.set(age*5,i,age*7);});
@@ -499,7 +512,7 @@ function init3D(){
   player.bubble.visible=(S.shield>0||P.diamond>0||S.shieldImpact<.65);player.bubble.position.y=1+P.y*2;shieldMat.uniforms.flowTime.value=time;shieldMat.uniforms.impact.value=S.shieldImpact;shieldMat.uniforms.shieldOn.value=S.shield>0||P.diamond>0?1:0;shieldMat.uniforms.tint.value.set(P.diamond>0?'#ffd98b':'#77dfff');
   confetti.visible=S.mode==='finish'&&!reducedMotion.matches;if(confetti.visible){for(let i=0;i<64;i++){const age=(S.finT*.45+hash(i))%1;inst(confetti,i,P.x*2.8+(hash(i+99)-.5)*16,8-age*9,-hash(i+31)*18,.075,.19,.01,time+i,time*.7+i);}confetti.instanceMatrix.needsUpdate=true;}
   visibleCues=0;cues.forEach(m=>m.visible=false);
-  const candidates=[...S.rivals.map((a,i)=>({s:a.s,x:a.x,y:3+(a.y||0)*2,key:'r'+i})),...S.ents.filter(e=>e.cat==='item'&&!e.dead).map(e=>({s:e.s,x:e.x,y:2.8,key:e.kind}))].filter(a=>a.s-P.s>2&&a.s-P.s<38).sort((a,b)=>a.s-b.s);
+  const candidates=[...S.rivals.map((a,i)=>({s:a.s,x:a.x,y:3+(a.y||0)*2,key:a.friendDriver?'friend':'r'+i})),...S.ents.filter(e=>e.cat==='item'&&!e.dead).map(e=>({s:e.s,x:e.x,y:2.8,key:e.kind}))].filter(a=>a.s-P.s>2&&a.s-P.s<38).sort((a,b)=>a.s-b.s);
   for(const a of candidates){if(visibleCues===cues.length)break;const point=coord(a.x,a.s-P.s,a.y),projected=point.clone().project(camera);if(Math.abs(projected.x)>.83||projected.y<-.65||projected.y>.68)continue;const m=cues[visibleCues++];m.visible=true;m.position.copy(point);m.quaternion.copy(camera.quaternion);const size=Math.max(2,Math.min(4.2,point.distanceTo(camera.position)*.105));m.scale.setScalar(size);m.material.map=cueTextures.get(a.key);}
   for(const m of dynamicBatches){if(!m.visible||!m.count)continue;m.instanceMatrix.needsUpdate=true;m.computeBoundingSphere();m.frustumCulled=true;}
   renderer.render(scene,camera);
