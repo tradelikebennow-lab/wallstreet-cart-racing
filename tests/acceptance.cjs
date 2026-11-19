@@ -4,7 +4,18 @@ const {openGame}=require('./browser-lib.cjs');
  const {browser,page:p,errors}=await openGame();
  try{
   await p.evaluate(()=>{raceQA.clean();raceQA.P.x=-.8;});
-  await p.keyboard.down('Shift');await p.keyboard.down('ArrowRight');await p.evaluate(()=>advanceTime(2000));
+  await p.keyboard.down('Shift');await p.keyboard.down('ArrowRight');
+  for(const [ms,tier,color] of [[600,1,'36caff'],[650,2,'ffad32'],[750,3,'ff62dc']]){
+   const cue=await p.evaluate(ms=>{
+    advanceTime(ms);
+    const sparks=raceQA.scene().getObjectByName('rear-wheel sparks');
+    return [raceQA.P.driftTier,sparks.visible,sparks.count,sparks.material.color.getHexString()];
+   },ms);
+   assert.deepEqual(cue,[tier,true,4*tier,color],'Both rear wheels should show the charged tier');
+  }
+  await p.emulateMedia({reducedMotion:'reduce'});
+  assert.equal(await p.evaluate(()=>{raceQA.render3D(0);return raceQA.scene().getObjectByName('rear-wheel sparks').count}),6,'Reduced motion keeps three steady rays per wheel');
+  await p.emulateMedia({reducedMotion:'no-preference'});
   assert.equal((await p.evaluate(()=>raceQA.snapshot())).drift.tier,3,'A full drift must reach tier three');
   await p.keyboard.up('Shift');await p.keyboard.up('ArrowRight');await p.evaluate(()=>advanceTime(20));
   assert.equal(await p.evaluate(()=>raceQA.P.boostMult),1.5);

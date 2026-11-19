@@ -28,6 +28,7 @@ Momentum and tire grip, drift turbo tiers, a banked corner and launch ramp, a da
 
 - Left/right arrows or A/D: steer.
 - Hold Shift while steering, then release Shift: drift turbo.
+- Watch either rear wheel for the ready tier: one blue streak for Mini, two amber for Super, or three pink for Ultra. Release drift to use it. Reduced-motion mode keeps the steady streaks.
 - Up arrow or Space: jump; down arrow: slide.
 - 1, 2, 3: use items; P: pause.
 - Matching pickups upgrade a held item to level 3. MAX READY shows its strongest version. Another matching pickup awards cash. Using the item consumes the slot at any level.

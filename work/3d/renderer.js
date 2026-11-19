@@ -350,7 +350,39 @@ function init3D(){
  const burstMat=new T.MeshBasicMaterial({color:'#fff1a1',transparent:true,depthWrite:false}),burstMesh=batch(boxgeo,burstMat,24,false);burstMesh.count=0;
  const pulse=new T.Mesh(new T.TorusGeometry(1,.045,6,64),new T.MeshBasicMaterial({color:'#ffd955',transparent:true,opacity:0,depthWrite:false}));pulse.rotation.x=-Math.PI/2;scene.add(pulse);
  const confetti=batch(boxgeo,new T.MeshBasicMaterial({color:'#ffffff',side:T.DoubleSide}),64,false);for(let i=0;i<64;i++)confetti.setColorAt(i,new T.Color(['#ffd56c','#ed746d','#6ecbe9','#ba8ae4'][i%4]));
- const sparkMesh=batch(sphere,new T.MeshBasicMaterial({color:'#8eeaff'}),16,false);
+ const sparkColors=['#d5d9db','#36caff','#ffad32','#ff62dc'];
+ // Each wheel has room for three steady streaks and three trailing embers.
+ const sparkMesh=batch(new T.OctahedronGeometry(1),new T.MeshBasicMaterial(),12,false);
+ sparkMesh.name='rear-wheel sparks';
+ player.body.add(sparkMesh);
+ function updateWheelSparks(time){
+  const tier=P.drifting?P.driftTier:0;
+  const scrubbing=P.v>18 && Math.abs(P.steer)>.55;
+  sparkMesh.visible=S.mode==='play' && P.y<.06 && (P.drifting||scrubbing)
+   && (tier>0||!reducedMotion.matches);
+  sparkMesh.count=0;
+  if(!sparkMesh.visible)return;
+  sparkMesh.material.color.set(sparkColors[tier]);
+  const rays=Math.max(tier,1);
+  for(const side of [-1,1]){
+   for(let ray=0;ray<rays;ray++){
+    const angle=side*(.40+ray*.58);
+    const reach=tier===0?.35:1.1+tier*.18;
+    const width=tier===0?.035:.10;
+    const dx=Math.sin(angle)*reach,dz=Math.cos(angle)*reach;
+    const rise=.16+ray*.16;
+    const wheelX=side*.95,wheelZ=.92;
+    inst(sparkMesh,sparkMesh.count++,wheelX+dx/2,.16+rise/2,wheelZ+dz/2,
+     width,width,Math.hypot(reach,rise)/2,angle,0,-Math.atan2(rise,reach));
+    if(tier>0 && !reducedMotion.matches){
+     const age=(time*2.6+ray*.31+(side+1)*.21)%1;
+     const t=1.05+age*.52,size=.077*(1-age*.7);
+     inst(sparkMesh,sparkMesh.count++,wheelX+dx*t,.16+rise*t,wheelZ+dz*t,
+      size,size,size*1.9,angle);
+    }
+   }
+  }
+ }
  let effectInfo={},previousSector=-1, cameraState=null, cameraMode=null, cameraDistance=0;
  let itemEvent=null,itemAge=0,itemDuration=.6;
  const itemOrigin=new T.Vector3();
@@ -463,8 +495,7 @@ function init3D(){
    burstMesh.instanceMatrix.needsUpdate=true;
   }
   pulse.visible=!!itemEvent&&itemEvent.kind==='BREAKER'&&itemEvent.type==='use';if(pulse.visible){place(pulse,P.x,0,.15);pulse.rotation.x-=Math.PI/2;pulse.scale.setScalar(1+itemAge*24);pulse.material.opacity=(1-itemAge/itemDuration)*.8;}
-  const drift=S.mode==='play'&&P.v>18&&(P.drifting||Math.abs(P.steer)>.55)&&P.y<.05&&!reducedMotion.matches;
-  sparkMesh.visible=drift;if(drift){sparkMesh.material.color.set(P.drifting?['#a7d9ff','#55c7ff','#ffb448','#ef7ce3'][P.driftTier]:'#fff4b7');for(let i=0;i<16;i++){const age=(time*3+i/16)%1,side=i%2?1:-1;const p=coord(P.x+side*(.8+age*.35)/2.8,-(1+age*3)/1.6,.15+Math.sin(age*Math.PI)*.35);inst(sparkMesh,i,p.x,p.y,p.z,.025,.035,.12*(1-age));}sparkMesh.instanceMatrix.needsUpdate=true;}
+  updateWheelSparks(time);
   player.bubble.visible=(S.shield>0||P.diamond>0||S.shieldImpact<.65);player.bubble.position.y=1+P.y*2;shieldMat.uniforms.flowTime.value=time;shieldMat.uniforms.impact.value=S.shieldImpact;shieldMat.uniforms.shieldOn.value=S.shield>0||P.diamond>0?1:0;shieldMat.uniforms.tint.value.set(P.diamond>0?'#ffd98b':'#77dfff');
   confetti.visible=S.mode==='finish'&&!reducedMotion.matches;if(confetti.visible){for(let i=0;i<64;i++){const age=(S.finT*.45+hash(i))%1;inst(confetti,i,P.x*2.8+(hash(i+99)-.5)*16,8-age*9,-hash(i+31)*18,.075,.19,.01,time+i,time*.7+i);}confetti.instanceMatrix.needsUpdate=true;}
   visibleCues=0;cues.forEach(m=>m.visible=false);

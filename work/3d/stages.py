@@ -18,8 +18,8 @@ def stages(s):
  s=sub(s,'function initRaceUX(){','function initRaceUX(){\n initDrivingControls();')
  s=sub(s,'let engineVoice=null;',read('work/3d/driving.js')+'\nlet engineVoice=null;')
  s=sub(s,'</style>',read('work/3d/driving.css')+'\n</style>')
- s=sub(s,'<div class="race-feedback"', '<div id="driftMeter" class="drift-meter" hidden><span id="driftText">HOLD + STEER TO CHARGE</span><div><i id="driftFill"></i></div></div><div class="race-feedback"')
- s=sub(s,'  <section class="ovl" id="title">', '<div class="drive-tools"><div class="speed-readout"><b id="speedValue">0</b>KM/H</div><button type="button" class="drift-button" id="bDrift" aria-pressed="false">DRIFT<small>HOLD SHIFT + STEER</small></button></div><button type="button" class="drift-button drift-right" id="bDrift2" aria-pressed="false">DRIFT</button>\n  <section class="ovl" id="title">')
+
+ s=sub(s,'  <section class="ovl" id="title">', '<div class="drive-tools"><div id="driftMeter" class="drift-meter" hidden><span id="driftText">HOLD + STEER TO CHARGE</span><div><i id="driftFill"></i></div></div><div class="speed-readout"><b id="speedValue">0</b>KM/H</div><button type="button" class="drift-button" id="bDrift" aria-pressed="false">DRIFT<small>HOLD SHIFT + STEER</small></button></div><button type="button" class="drift-button drift-right" id="bDrift2" aria-pressed="false">DRIFT</button>\n  <section class="ovl" id="title">')
  s=sub(s,'Steer ← → or A D (curves push you wide)', 'Steer ← → or A D · Hold Shift + steer to drift; release Shift for a charged boost (blue → orange → pink)')
  s=sub(s,'Phone: hold the ◀ ▶ corner buttons to steer,', 'Phone: to drift, hold ◀ or ▶ with one thumb and the DRIFT button on the other side with the other thumb; release DRIFT to boost. Hold the ◀ ▶ corner buttons to steer,')
  s=sub(s,'player: { s: +P.s.toFixed(1),','drift: {active:!!P.drifting,tier:P.driftTier,charge:+P.driftCharge.toFixed(2)}, player: { s: +P.s.toFixed(1),')

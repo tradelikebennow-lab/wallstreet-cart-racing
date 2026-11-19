@@ -3,3 +3,4 @@
 @media(max-height:500px){.drive-tools{bottom:30px}.speed-readout b{font-size:25px}.drift-button{min-height:43px}.drift-meter{padding:4px 8px;font-size:8px}}
 .drift-right{display:none}
 @media(pointer:coarse){.drive-tools{left:max(10px,env(safe-area-inset-left));bottom:calc(92px + env(safe-area-inset-bottom,0px))}.drift-right{display:block;position:absolute;right:max(10px,env(safe-area-inset-right));bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:3}.drift-button small{display:none}.bottom{width:min(440px,calc(100% - 172px))}#game:is([data-mode=title],[data-mode=results],[data-mode=paused]) .drift-right{display:none}}
+.drive-tools .drift-meter{width:135px;justify-self:start}.drive-tools .drift-meter[hidden]{display:none}@media(max-width:720px),(max-height:500px){.drive-tools .drift-meter{width:86px}}
