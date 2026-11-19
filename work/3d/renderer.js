@@ -282,7 +282,70 @@ function init3D(){
  }
  scene.add(boostStrip);
  const exhaust=batch(sphere,new T.MeshBasicMaterial({color:'#ffc76b',transparent:true,opacity:.8,depthWrite:false}),140,false);exhaust.count=0;
- const gates=[];for(let i=0;i<4;i++){const g=new T.Group();for(const x of [-5,5]){round(g,mat(['#6bbbc7','#9b87d7','#e9957c','#6bbbc7'][i]),x,2.8,0,.5,5.6,.6,.13);orb(g,gold,x,5.6,0,.33);}round(g,mat('#f9e9bc'),0,5.05,0,10.6,1,.7,.2);sign(g,['OPENING BELL CUP','CRYPTO SPEEDWAY','MELTDOWN CASTLE','CLOSING BELL'][i],0,5.15,.38,9,.54,'#fff0cf','#234b64');for(let j=0;j<20;j++)box(g,j%2?white:dark,-4.75+j*.5,4.67,.37,.5,.2,.025);scene.add(g);gates.push(g);}
+ function raceBanner(label){
+  const g=new T.Group();
+  for(const x of [-5,5]){
+   round(g,mat('#6bbbc7'),x,2.8,0,.5,5.6,.6,.13);
+   orb(g,gold,x,5.6,0,.33);
+  }
+  round(g,mat('#f9e9bc'),0,5.05,0,10.6,1,.7,.2);
+  sign(g,label,0,5.15,.38,9,.54,'#fff0cf','#234b64');
+  for(let j=0;j<20;j++)box(g,j%2?white:dark,-4.75+j*.5,4.67,.37,.5,.2,.025);
+  return g;
+ }
+ function exchangeBell(){
+  const g=new T.Group(),copper=mat('#875338',.48,.25);
+  for(const x of [-2.25,2.25]){
+   box(g,copper,x,3.75,0,.65,7.5,.8);
+   box(g,white,x,.45,0,1.5,.9,1.5);
+  }
+  box(g,copper,0,7.5,0,5.3,.6,.8);
+  cylinder(g,dark,0,7,0,.22,.8);
+  const profile=[[.15,0],[1.9,0],[1.96,.23],[1.53,.58],[1.24,1.06],[1.11,2.12],[.77,2.72],[.24,2.9]];
+  mesh(g,new T.LatheGeometry(profile.map(([r,y])=>new T.Vector2(r,y)),32),gold,0,3.7,0);
+  orb(g,copper,0,3.47,0,.46);
+  return g;
+ }
+ function coinArch(){
+  const g=new T.Group(),violet=mat('#513e83'),amber=mat('#b26b24');
+  for(const x of [-6,6])box(g,violet,x,1.55,0,1.4,3.1,1.8);
+  mesh(g,new T.TorusGeometry(6,.57,8,32,Math.PI),amber,0,3,0);
+  for(let i=0;i<=8;i++){
+   const angle=i*Math.PI/8,x=6*Math.cos(angle),y=3+6*Math.sin(angle);
+   const radius=i===4?1.52:.89;
+   cylinder(g,gold,x,y,.51,radius,.54).rotation.x=Math.PI/2;
+   mesh(g,new T.TorusGeometry(radius*.81,.075,6,20),amber,x,y,.8);
+  }
+  sign(g,'$',0,9,.81,1.45,1.7,'#00000000','#784627');
+  sign(g,'CRYPTO SPEEDWAY',0,7.03,.22,4.8,.67,'#47336c');
+  return g;
+ }
+ function furnaceGate(){
+  const g=new T.Group(),iron=mat('#403643'),brick=mat('#8d4840');
+  const fire=new T.MeshBasicMaterial({color:'#ff973e'});
+  for(const side of [-1,1]){
+   const x=6.4*side;
+   box(g,brick,x,4.1,0,2.1,8.2,2.5);
+   box(g,iron,x,8.3,0,2.65,.55,2.85);
+   cylinder(g,iron,x,9.6,0,.76,2.4);
+   cylinder(g,fire,x,10.84,0,.8,.2);
+   box(g,fire,x,3,1.27,1.35,2.65,.09);
+   for(const dx of [-.42,0,.42])box(g,iron,x+dx,3,1.35,.14,2.8,.12);
+   box(g,iron,side*4.7,6.7,0,.62,4.25,1.4).rotation.z=side*.8;
+  }
+  box(g,iron,0,8.15,0,12.8,1.35,1.7);
+  box(g,fire,0,7.57,.87,8,.14,.08);
+  sign(g,'MELTDOWN CASTLE',0,8.26,.88,7.9,.72,'#46343e','#ffe0a0');
+  return g;
+ }
+ const gates=[
+  {station:4,model:raceBanner('OPENING BELL CUP')},
+  {station:Course.features.find(f=>f.id==='opening-bank').end,lane:-3,model:exchangeBell()},
+  {station:SECT[1],model:coinArch()},
+  {station:SECT[2],model:furnaceGate()},
+  {station:LEN,model:raceBanner('CLOSING BELL')}
+ ];
+ for(const {model} of gates)scene.add(model);
 
  const burstMat=new T.MeshBasicMaterial({color:'#fff1a1',transparent:true,depthWrite:false}),burstMesh=batch(boxgeo,burstMat,24,false);burstMesh.count=0;
  const pulse=new T.Mesh(new T.TorusGeometry(1,.045,6,64),new T.MeshBasicMaterial({color:'#ffd955',transparent:true,opacity:0,depthWrite:false}));pulse.rotation.x=-Math.PI/2;scene.add(pulse);
@@ -374,7 +437,11 @@ function init3D(){
   boostStrip.visible=stripDistance>-10 && stripDistance<FAR;
   if(boostStrip.visible)place(boostStrip,choice.inside,stripDistance,.09);
   courseSigns.forEach(({g,s,x})=>{const d=s-P.s;g.visible=d>-12&&d<125;if(g.visible)place(g,x,d);});
-  gates.forEach((g,i)=>{const d=[4,1400,2800,4200][i]-P.s;g.visible=d>-16&&d<125;if(g.visible)place(g,0,d);});
+  for(const {station,model,lane=0} of gates){
+   const distance=station-P.s;
+   model.visible=distance>-16 && distance<125;
+   if(model.visible)place(model,lane,distance);
+  }
   if(showroom){camera.position.set(7+Math.sin(time*.15)*.6,4.0,8.4);camera.lookAt(-2.6,1.3,-1);camera.fov=46;cameraState=null;}
   else{
    const ahead=coord(P.x*.35,16+Math.min(5,P.v*.1)),at=coord(P.x,0);
